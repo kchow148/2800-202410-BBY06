@@ -9,6 +9,17 @@ const app = express();
 const port = process.env.PORT || 3000;
 const Joi = require("joi");
 
+app.set('view engine', 'ejs');
+
+app.get('/', (req, res)=>{
+    res.render("index");
+});
+
+app.get('*', (req, res)=>{
+    res.status(404);
+    res.render("404");
+})
+
 app.listen(port, ()=> {
     console.log(`Server is running on port ${port}`);
 })
