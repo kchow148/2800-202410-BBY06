@@ -15,6 +15,10 @@ app.get('/', (req, res)=>{
     res.render("index");
 });
 
+app.get('/budgetExceeded', (req, res) => {
+    res.render("WarningExceedBudget");
+});
+
 app.get('*', (req, res)=>{
     res.status(404);
     res.render("404");
