@@ -39,7 +39,7 @@ app.get('/', (req, res)=>{
 });
 
 app.get('/setBudget', (req,res) =>{
-    res.render(setBudget);
+    res.render("setBudget");
 })
 
 app.get('*', (req, res)=>{
