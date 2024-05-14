@@ -1,20 +1,21 @@
-<main class="form-signin w-100 m-auto">
+<%- include("templates/header") %>
+  <main class="form-signin w-100 m-auto">
     <form action='/settingBudget' method='post'>
-      <h1 class="h3 mb-3 fw-normal"></h1>
-  
+      <h1 class="h3 mb-3 fw-normal">Create Budget</h1>
+
       <div class="form-floating">
         <input name="name" type="textarea" class="form-control" id="floatingInput" placeholder="Budget Name">
-        <label for="floatingInput">Budget name</label>
-      </div>  
-      <div class="form-floating">
-        <input name='password' type="password" class="form-control" id="floatingPassword" placeholder="Password">
-        <label for="floatingPassword">Password</label>
+        <label for="floatingInput">Budget Name</label>
       </div>
-  
+      <div class="form-floating">
+        <input name='amount' type="number" class="form-control" id="floatingnumber" placeholder="Budget Amount in Dollars">
+        <label for="floatingnumber">Budget Amount in Dollars</label>
+      </div>
+
       <div class="form-check text-start my-3">
       </div>
-      <button class="btn btn-primary w-100 py-2" type="submit">Login</button>
-      <p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
+      <button class="btn btn-primary w-100 py-2" type="submit">Create</button>
+      <p class="mt-5 mb-3 text-body-secondary">© 2024</p>
     </form>
   </main>
 <%- include("templates/footer") %>

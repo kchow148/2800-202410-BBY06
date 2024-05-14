@@ -18,7 +18,7 @@ const node_session_secret = process.env.NODE_SESSION_SECRET;
 const Joi = require("joi");
 app.use(express.urlencoded({ extended: false }));
 var mongoStore = MongoStore.create({
-    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}`,
+    mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}/sessions`,
     crypto: {
         secret: mongodb_secret
     }
@@ -34,19 +34,39 @@ app.use(session({
     resave: true
 }));
 
-app.get('/', (req, res)=>{
+app.get('/', (req, res) => {
     res.render("index");
 });
 
-app.get('/setBudget', (req,res) =>{
+app.get('/setBudget', (req, res) => {
     res.render("setBudget");
 })
 
-app.get('*', (req, res)=>{
+app.post('/settingBudget', async (req, res) => {
+    budgetname = req.body.name;
+    budgetamount = req.body.amount;
+    username = req.session.username;
+    const schema = Joi.object(
+        {
+            budgetname: Joi.string().alphanum().max(20).required(),
+            budgetamount: Joi.boolean
+        });
+    const validationResult = schema.validate({ budgetname, budgetamount});
+    await userCollection.updateOne(
+        // Filter criteria to find the document to update
+        { username: username },
+        // Update operation
+        { $addToSet: { categories: { $each: [[{budgetname : budgetname},{budgetamount: budgetamount}]] } } },
+        // Options (optional)
+     )
+    res.redirect('/setBudget');
+});
+
+app.get('*', (req, res) => {
     res.status(404);
     res.render("404");
 })
 
-app.listen(port, ()=> {
+app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
