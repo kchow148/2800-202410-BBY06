@@ -52,13 +52,16 @@ app.post('/settingBudget', async (req, res) => {
             budgetamount: Joi.boolean
         });
     const validationResult = schema.validate({ budgetname, budgetamount});
-    await userCollection.updateOne(
+    const changed =await userCollection.updateOne(
         // Filter criteria to find the document to update
         { username: username },
         // Update operation
         { $addToSet: { categories: { $each: [[{budgetname : budgetname},{budgetamount: budgetamount}]] } } },
         // Options (optional)
      )
+     if (changed.modifiedCount== 0){
+        console.log("budget already exists");
+     }
     res.redirect('/setBudget');
 });
 
