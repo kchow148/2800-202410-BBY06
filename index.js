@@ -74,6 +74,11 @@ app.post('/submitUser', async (req, res) => {
     res.render("home", { html: html });
 });
 
+app.get('/logout', (req,res) => {
+    req.session.destroy();
+    res.redirect('/');
+})
+
 app.get('*', (req, res)=>{
     res.status(404);
     res.render("404");
