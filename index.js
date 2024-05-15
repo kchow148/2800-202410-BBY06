@@ -16,6 +16,9 @@ const mongodb_secret = process.env.MONGODB_SESSION_SECRET;
 const mongodb_database = process.env.MONGODB_DATABASE;
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 const Joi = require("joi");
+const favicon = require('serve-favicon');
+const path = require('path');
+
 app.use(express.urlencoded({ extended: false }));
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}`,
@@ -26,6 +29,8 @@ var mongoStore = MongoStore.create({
 const { database } = require('./databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 app.set('view engine', 'ejs');
+app.use(favicon(path.join(__dirname + '/public', 'images', 'logo.ico')));
+
 
 app.use(session({
     secret: node_session_secret,
@@ -73,6 +78,10 @@ app.post('/submitUser', async (req, res) => {
 
     res.render("home", { html: html });
 });
+
+app.get('/homepage', (req,res) => {
+    res.render("homepage");
+})
 
 app.get('/logout', (req,res) => {
     req.session.destroy();
