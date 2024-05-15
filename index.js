@@ -34,18 +34,46 @@ app.use(session({
     resave: true
 }));
 
-app.get('/', (req, res)=>{
-    res.render("index");
+function isValidSession(req) {
+    if (req.session.authenticated) {
+        return true;
+    }
+    return false;
+}
+
+function sessionValidation(req, res, next) {
+    if (isValidSession(req)) {
+        next();
+    }
+    else {
+        res.redirect('/login');
+    }
+}
+
+app.get('/', (req, res) => {
+    if (req.session.authenticated) {
+        res.render("index");
+    } else {
+        res.render("index");
+
+    }
 });
 
 app.get('/createUser', (req, res) => {
-    res.render("createUser");
+    res.render("createUser", { html: '' });
 });
+
 
 app.post('/submitUser', async (req, res) => {
     var username = req.body.username;
     var loginID = req.body.loginID;
     var password = req.body.password;
+
+    const existingUser = await userCollection.findOne({ loginID: loginID });
+    if (existingUser) {
+        var html = "LoginID already taken. Please choose a different one.";
+        return res.render("createUser", { html: html });
+    } 
 
     const schema = Joi.object({
         loginID: Joi.string().alphanum().max(20).required(),
@@ -73,6 +101,56 @@ app.post('/submitUser', async (req, res) => {
 
     res.render("home", { html: html });
 });
+
+app.get('/login', (req, res) => {
+    res.render("login");
+});
+
+app.post('/loggingin', async (req, res) => {
+    var loginID = req.body.loginID;
+    var password = req.body.password;
+
+    const schema = Joi.string().max(20).required();
+    const validationResult = schema.validate(loginID);
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/login");
+        return;
+    }
+
+    const result = await userCollection.find({ loginID: loginID }).project({ loginID: 1, password: 1, _id: 1 }).toArray();
+
+    console.log(result);
+    if (result.length != 1) {
+        console.log("user not found");
+        res.redirect("/login");
+        return;
+    }
+    if (await bcrypt.compare(password, result[0].password)) {
+        console.log("correct password");
+        req.session.authenticated = true;
+        req.session.loginID = loginID;
+        req.session.user_type = result[0].user_type;
+        req.session.cookie.maxAge = expireTime;
+
+        res.redirect("/home");
+        return;
+    }
+    else {
+        console.log("incorrect password");
+        res.redirect("/login");
+        return;
+    }
+});
+
+app.use('/home', sessionValidation);
+app.get('/home', (req, res) => {
+    if (!req.session.authenticated) {
+        res.redirect('/login');
+    }
+    res.render("home");
+});
+
 
 app.get('*', (req, res)=>{
     res.status(404);
