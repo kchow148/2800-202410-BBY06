@@ -232,6 +232,15 @@ app.get('/profilePage', async (req,res)=> {
 
 });
 
+//app.use('/budgets', sessionValidation);
+app.get('/budgets', async (req,res)=> {
+    loginID = req.session.loginID;
+    const result =  await userCollection.find({loginID : loginID}).project({categories:1}).toArray();
+    console.log(result);
+    budgets = result[0].categories
+    res.render("budgets",{budgets: budgets});
+});
+
 app.get('*', (req, res) => {
     res.status(404);
     res.render("404");
