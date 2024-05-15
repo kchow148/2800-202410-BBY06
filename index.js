@@ -79,6 +79,10 @@ app.post('/submitUser', async (req, res) => {
     res.render("home", { html: html });
 });
 
+app.get('/homepage', (req,res) => {
+    res.render("homepage");
+})
+
 app.get('*', (req, res)=>{
     res.status(404);
     res.render("404");
