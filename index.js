@@ -28,6 +28,7 @@ var mongoStore = MongoStore.create({
 });
 const { database } = require('./databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
+const expenseCollection = database.db(mongodb_database).collection('expenses');
 app.set('view engine', 'ejs');
 app.use(favicon(path.join(__dirname + '/public', 'images', 'logo.ico')));
 
@@ -39,7 +40,7 @@ app.use(session({
     resave: true
 }));
 
-app.get('/', (req, res)=>{
+app.get('/', (req, res) => {
     res.render("index");
 });
 
@@ -66,7 +67,7 @@ app.post('/submitUser', async (req, res) => {
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    await userCollection.insertOne({ username: username, loginID: loginID, password: hashedPassword});
+    await userCollection.insertOne({ username: username, loginID: loginID, password: hashedPassword });
     console.log("Inserted user");
 
     // Set session variables for the new user
@@ -79,11 +80,34 @@ app.post('/submitUser', async (req, res) => {
     res.render("home", { html: html });
 });
 
-app.get('*', (req, res)=>{
+app.get('/addExpenses', (req, res) => {
+    res.render("addExpenses");
+});
+
+app.post('/addingExpenses', async (req, res) => {
+    expense = req.body.expense
+    category = req.body.category;
+    price = req.body.price;
+    let fieldname = category;
+    let obexpense = { expense: "expense", date: "date", price: price }
+    let pushQuery = {};
+    pushQuery[fieldname] = obexpense;
+    expenseCollection.findOneAndUpdate(
+        { Login_Id: "Login_Id" },
+        { $push: pushQuery },
+        { upsert: true, new: true }
+    );
+    console.log(expense);
+    console.log(category);
+    console.log(price);
+    res.redirect('/addExpenses');
+});
+
+app.get('*', (req, res) => {
     res.status(404);
     res.render("404");
 })
 
-app.listen(port, ()=> {
+app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
