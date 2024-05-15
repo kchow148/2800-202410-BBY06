@@ -163,6 +163,7 @@ app.get('/logout', (req,res) => {
     res.redirect('/');
 })
 
+app.use('/setBudget', sessionValidation);
 app.get('/setBudget', (req, res) => {
     res.render("setBudget");
 })
@@ -191,6 +192,7 @@ app.post('/settingBudget', async (req, res) => {
     res.redirect('/setBudget');
 });
 
+app.use('/addExpenses', sessionValidation);
 app.get('/addExpenses', (req, res) => {
     res.render("addExpenses");
 });
@@ -217,6 +219,17 @@ app.post('/addingExpenses', async (req, res) => {
         { upsert: true, new: true }
     );
     res.redirect('/addExpenses');
+});
+
+app.use('/proflePage', sessionValidation);
+app.get('/profilePage', async (req,res)=> {
+    loginID = req.session.loginID;
+    // const result = userCollection.find({loginID : loginID}).project({username:1, loginID: 1, email: 1}).toArray();
+    const result =  await userCollection.find({loginID : loginID}).project({username:1, loginID: 1}).toArray();
+    console.log(result);
+    username = result[0].username
+    res.render("profilePage",{username: username, loginID:loginID});
+
 });
 
 app.get('*', (req, res) => {
