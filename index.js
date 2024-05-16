@@ -259,6 +259,16 @@ app.get('/budgets', async (req, res) => {
     }
 });
 
+app.use('/expenses', sessionValidation);
+app.get('/expenses', async(req, res) =>{
+    res.render("expenses");
+})
+
+app.use('/investments', sessionValidation);
+app.get('/investments', async(req, res) =>{
+    res.render("investments");
+})
+
 app.get('*', (req, res) => {
     res.status(404);
     res.render("404");
