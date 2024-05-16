@@ -183,6 +183,17 @@ app.get("/passwordChange", (req, res)=>{
     res.render("passwordChange");
 });
 
+app.post("/changingPassword", async (req, res)=>{
+    var loginID = req.body.loginID;
+    var password = req.body.password;
+
+    const schema = Joi.string().max(20).required();
+    var hashedPassword = await bcrypt.hash(password, saltRounds);
+    await userCollection.updateOne({loginID: loginID}, {$set: {password: hashedPassword}});
+    res.redirect("/login");
+    return;
+});
+
 app.use('/home', sessionValidation);
 app.get('/home', async (req, res) => {
     if (!req.session.authenticated) {
