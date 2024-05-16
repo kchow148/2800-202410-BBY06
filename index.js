@@ -16,8 +16,8 @@ const mongodb_secret = process.env.MONGODB_SESSION_SECRET;
 const mongodb_database = process.env.MONGODB_DATABASE;
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 const Joi = require("joi");
-// const favicon = require('serve-favicon');
-// const path = require('path');
+const favicon = require('serve-favicon');
+const path = require('path');
 
 app.use(express.urlencoded({ extended: false }));
 var mongoStore = MongoStore.create({
@@ -31,7 +31,7 @@ const userCollection = database.db(mongodb_database).collection('users');
 const expenseCollection = database.db(mongodb_database).collection('expenses');
 const investmentCollection = database.db(mongodb_database).collection('investments');
 app.set('view engine', 'ejs');
-// app.use(favicon(path.join(__dirname + '/public', 'images', 'logo.ico')));
+app.use(favicon(path.join(__dirname + '/public', 'images', 'logo.ico')));
 
 
 app.use(session({
@@ -151,6 +151,47 @@ app.post('/loggingin', async (req, res) => {
         res.redirect("/login");
         return;
     }
+});
+
+app.get("/passwordReset", (req, res)=>{
+    res.render("passwordReset");
+});
+
+app.post("/confirmLoginID", async (req, res)=>{
+    var loginID = req.body.loginID;
+
+    const schema = Joi.string().max(20).required();
+    const validationResult = schema.validate(loginID);
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/passwordReset");
+        return;
+    }
+
+    const result = await userCollection.find({ loginID: loginID }).project({ loginID: 1, password: 1, _id: 1 }).toArray();
+
+    if (result.length != 1) {
+        console.log("user not found");
+        res.redirect("/passwordReset");
+        return;
+    }
+
+    res.redirect("/passwordChange");
+});
+
+app.get("/passwordChange", (req, res)=>{
+    res.render("passwordChange");
+});
+
+app.post("/changingPassword", async (req, res)=>{
+    var loginID = req.body.loginID;
+    var password = req.body.password;
+
+    const schema = Joi.string().max(20).required();
+    var hashedPassword = await bcrypt.hash(password, saltRounds);
+    await userCollection.updateOne({loginID: loginID}, {$set: {password: hashedPassword}});
+    res.redirect("/login");
+    return;
 });
 
 app.use('/home', sessionValidation);
