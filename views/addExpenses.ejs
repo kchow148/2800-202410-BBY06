@@ -13,10 +13,13 @@
           <label class="input-group-text" for="inputGroupSelect01">Categories</label>
         </div>
         <select name="category" class="custom-select" id="inputGroupSelect01">
-          <option selected>Choose...</option>
-          <option value="dine-out">dine-out</dine-out></option>
-          <option value="uber">uber</option>
-          <option value="coffee">coffee</option>
+          <option selected value="other">other<div class=""></div></option>
+          <% if (exist) { %>
+            <% let i = 0; %>
+            <% for (i = 0; i < category.length; i++) { %> 
+              <%- include("templates/dropdown",{category: category[i]}) %>
+            <% } %>
+          <% } %>
         </select>
       </div>
 
