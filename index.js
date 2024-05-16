@@ -270,7 +270,7 @@ app.get('/investments', async(req, res) =>{
     res.render("investments");
 })
 
-app.post('addingInvestments', async(req, res)=>{
+app.post('/addingInvestments', async(req, res)=>{
     var investment = req.body.investment;
     var price = req.body.price;
     var year = req.body.year;
