@@ -6,4 +6,15 @@
     <a href="/investments">
         <button type = "button" class = "btn btn-success w-100 py-2">Long Term Investments</button>
     </a>
+    <% if (exist) { %>
+        <div class="list-group">
+        <% let i = 0 %>
+        <% for (i = 0; i < expense.length; i++) { %> 
+            <%- include('./templates/listofexpense', {expense: expense[i]})  %> 
+        <% } %>
+    </div>
+    stuff
+    <% } else { %>
+        No expenses recorded
+    <% } %>
 <%- include("templates/footer") %>
