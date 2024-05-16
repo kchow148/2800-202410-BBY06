@@ -1,3 +1,36 @@
 <%- include("templates/header") %>
-<h1>Hello World</h1>
-<%- include("templates/footer") %>
+<style>
+    .btn li {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    .btn a {
+        text-decoration: none;
+    }
+</style>
+
+<body>
+        <div class="px-4 py-5 my-5 text-center">
+            <h1 class="display-5 fw-bold text-body-emphasis">Welcome!</h1>
+            <div class="col-lg-6 mx-auto">
+
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+                        <li><a href="/createUser">sign up</a></li>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary btn-lg px-4">
+                        <li><a href="/login">login</a></li>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <%- include("templates/footer") %>
+</body>
+
+</html>
