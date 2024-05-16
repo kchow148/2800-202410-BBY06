@@ -57,6 +57,8 @@ function sessionValidation(req, res, next) {
 }
 
 app.get('/', (req, res) => {
+    console.log(isValidSession(req) == true);
+    console.log(true);
     if (req.session.authenticated) {
         res.render("index");
     } else {
@@ -105,7 +107,8 @@ app.post('/submitUser', async (req, res) => {
 
     var html = "successfully created user";
 
-    res.render("home", { html: html });
+    //res.render("home", { html: html });
+    res.redirect('/home');
 });
 
 app.get('/login', (req, res) => {
@@ -156,7 +159,8 @@ app.get('/home', async (req, res) => {
     }
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
-    if (result[0].categories.length < 0) {
+    console.log(result[0].categories)
+    if (result[0].categories === undefined) {
         res.render("home", { exist: false });
     }
     else {
@@ -230,7 +234,7 @@ app.post('/addingExpenses', async (req, res) => {
     res.redirect('/addExpenses');
 });
 
-app.use('/proflePage', sessionValidation);
+app.use('/profilePage', sessionValidation);
 app.get('/profilePage', async (req, res) => {
     loginID = req.session.loginID;
     // const result = userCollection.find({loginID : loginID}).project({username:1, loginID: 1, email: 1}).toArray();
@@ -241,12 +245,12 @@ app.get('/profilePage', async (req, res) => {
 
 });
 
-//app.use('/budgets', sessionValidation);
+app.use('/budgets', sessionValidation);
 app.get('/budgets', async (req, res) => {
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     console.log(result);
-    if (result[0].categories.length < 0) {
+    if (result[0].categories === undefined) {
         res.redirect("/home");
     }
     else {
