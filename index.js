@@ -29,6 +29,7 @@ var mongoStore = MongoStore.create({
 const { database } = require('./databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 const expenseCollection = database.db(mongodb_database).collection('expenses');
+const investmentCollection = database.db(mongodb_database).collection('investments');
 app.set('view engine', 'ejs');
 // app.use(favicon(path.join(__dirname + '/public', 'images', 'logo.ico')));
 
@@ -267,6 +268,21 @@ app.get('/expenses', async(req, res) =>{
 app.use('/investments', sessionValidation);
 app.get('/investments', async(req, res) =>{
     res.render("investments");
+})
+
+app.post('addingInvestments', async(req, res)=>{
+    var investment = req.body.investment;
+    var price = req.body.price;
+    var year = req.body.year;
+    var loginID = req.session.loginID;
+
+    await investmentCollection.insertOne({investment: investment, price: price, year: year, loginID: loginID});
+    res.redirect("/calculations");
+});
+
+app.use('/calculations', sessionValidation);
+app.get('/calculations', async(req, res) =>{
+    res.render("calculations");
 })
 
 app.get('*', (req, res) => {
