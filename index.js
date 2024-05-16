@@ -57,6 +57,8 @@ function sessionValidation(req, res, next) {
 }
 
 app.get('/', (req, res) => {
+    console.log(isValidSession(req) == true);
+    console.log(true);
     if (req.session.authenticated) {
         res.render("index");
     } else {
@@ -79,7 +81,7 @@ app.post('/submitUser', async (req, res) => {
     if (existingUser) {
         var html = "LoginID already taken. Please choose a different one.";
         return res.render("createUser", { html: html });
-    } 
+    }
 
     const schema = Joi.object({
         loginID: Joi.string().alphanum().max(20).required(),
@@ -105,7 +107,8 @@ app.post('/submitUser', async (req, res) => {
 
     var html = "successfully created user";
 
-    res.render("home", { html: html });
+    //res.render("home", { html: html });
+    res.redirect('/home');
 });
 
 app.get('/login', (req, res) => {
@@ -150,15 +153,25 @@ app.post('/loggingin', async (req, res) => {
 });
 
 app.use('/home', sessionValidation);
-app.get('/home', (req, res) => {
+app.get('/home', async (req, res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
     }
-    res.render("home");
+    loginID = req.session.loginID;
+    const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
+    console.log(result[0].categories)
+    if (result[0].categories === undefined) {
+        res.render("home", { exist: false });
+    }
+    else {
+        budgets = result[0].categories
+        console.log(budgets.length)
+        res.render("home", { exist: true, budgets, budgets });
+    }
 });
 
 
-app.get('/logout', (req,res) => {
+app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 })
@@ -178,17 +191,17 @@ app.post('/settingBudget', async (req, res) => {
             budgetname: Joi.string().alphanum().max(20).required(),
             budgetamount: Joi.boolean
         });
-    const validationResult = schema.validate({ budgetname, budgetamount});
-    const changed =await userCollection.updateOne(
+    const validationResult = schema.validate({ budgetname, budgetamount });
+    const changed = await userCollection.updateOne(
         // Filter criteria to find the document to update
         { loginID: loginID },
         // Update operation
-        { $addToSet: { categories: { $each: [{budgetname : budgetname, budgetamount: budgetamount}] } } },
+        { $addToSet: { categories: { $each: [{ budgetname: budgetname, budgetamount: budgetamount }] } } },
         // Options (optional)
-     )
-     if (changed.modifiedCount== 0){
+    )
+    if (changed.modifiedCount == 0) {
         console.log("budget already exists");
-     }
+    }
     res.redirect('/setBudget');
 });
 
@@ -221,14 +234,14 @@ app.post('/addingExpenses', async (req, res) => {
     res.redirect('/addExpenses');
 });
 
-app.use('/proflePage', sessionValidation);
-app.get('/profilePage', async (req,res)=> {
+app.use('/profilePage', sessionValidation);
+app.get('/profilePage', async (req, res) => {
     loginID = req.session.loginID;
     // const result = userCollection.find({loginID : loginID}).project({username:1, loginID: 1, email: 1}).toArray();
-    const result =  await userCollection.find({loginID : loginID}).project({username:1, loginID: 1}).toArray();
+    const result = await userCollection.find({ loginID: loginID }).project({ username: 1, loginID: 1 }).toArray();
     console.log(result);
     username = result[0].username
-    res.render("profilePage",{username: username, loginID:loginID});
+    res.render("profilePage", { username: username, loginID: loginID });
 
 });
 
@@ -237,13 +250,18 @@ app.get('/budgetExceeded', async (req, res) => {
     res.render("WarningExceedBudget");
 });
 
-//app.use('/budgets', sessionValidation);
-app.get('/budgets', async (req,res)=> {
+app.use('/budgets', sessionValidation);
+app.get('/budgets', async (req, res) => {
     loginID = req.session.loginID;
-    const result =  await userCollection.find({loginID : loginID}).project({categories:1}).toArray();
+    const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     console.log(result);
-    budgets = result[0].categories
-    res.render("budgets",{budgets: budgets});
+    if (result[0].categories === undefined) {
+        res.redirect("/home");
+    }
+    else {
+        budgets = result[0].categories;
+        res.render("budgets", { budgets: budgets });
+    }
 });
 
 app.get('*', (req, res) => {
@@ -251,6 +269,6 @@ app.get('*', (req, res) => {
     res.render("404");
 })
 
-app.listen(port, ()  => {
+app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
