@@ -153,6 +153,10 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
+app.get("passwordReset", (req, res)=>{
+    res.render("passwordReset");
+});
+
 app.use('/home', sessionValidation);
 app.get('/home', async (req, res) => {
     if (!req.session.authenticated) {
