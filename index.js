@@ -150,11 +150,20 @@ app.post('/loggingin', async (req, res) => {
 });
 
 app.use('/home', sessionValidation);
-app.get('/home', (req, res) => {
+app.get('/home', async (req, res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
     }
-    res.render("home");
+    loginID = req.session.loginID;
+    const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
+    if (result[0].categorieslength < 0){
+        res.render("home",{exist: false});
+    }
+    else {
+    budgets = result[0].categories
+    console.log(budgets);
+    res.render("home",{exist:true,budgets,budgets});
+    }
 });
 
 
