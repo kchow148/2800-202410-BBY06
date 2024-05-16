@@ -216,7 +216,7 @@ app.post('/addingExpenses', async (req, res) => {
     category = req.body.category;
     price = req.body.price;
     loginID = req.session.loginID;
-    objexpense = { expense: "expense", date: "date", price: price };
+    objexpense = { expense: expense, date: "date", price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
     await expenseCollection.findOneAndUpdate(
@@ -224,7 +224,7 @@ app.post('/addingExpenses', async (req, res) => {
         { $push: catexpense },
         { upsert: true, new: true }
     );
-    addexpense = { expense: "expense", date: "date", price: price, category: category };
+    addexpense = { expense: expense, date: "date", price: price, category: category };
     expense = {};
     expense["expense"] = addexpense;
     await expenseCollection.findOneAndUpdate(
@@ -232,7 +232,7 @@ app.post('/addingExpenses', async (req, res) => {
         { $push: expense },
         { upsert: true, new: true }
     );
-    res.redirect('/addExpenses');
+    res.redirect('/expenses');
 });
 
 app.use('/profilePage', sessionValidation);
@@ -269,14 +269,49 @@ app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
+    const resultUser = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
+    const budgetsArray = resultUser[0].categories;
+    console.log("budgetsArray: " + budgetsArray);
+    
+    //logic: find the budget name then use it to select the expenses that have that budget category name, add up all the eppxenses with that name and compare it to the budgets category in the users collection
+
+    let total = calculateTotal(result);
+    // console.log("total price: " + total);
+    // console.log(result[0].expense.length);
+    // console.log(result[0].expense);
+
     if (result.length === 0 || result[0].expense === undefined) {
-        res.render("expenses", { exist: false })
+        res.render("expenses", { exist: false });
     }
     else {
         expense = result[0].expense;
-        res.render("expenses", { expense: expense, exist: true })
+        res.render("expenses", { expense: expense, exist: true });
+
+        if(result[0].expense){
+            let total = calculateTotal(result);
+            for (const budget of budgetsAmount) {
+                const budgetName = budget.budgetname;
+                const budgetAmount = parseFloat(budget.budgetamount); 
+          
+                console.log(`Budget Name: ${budgetName}, Budget Amount: ${budgetAmount}`);
+          
+                if(total >= budgetAmount){
+                    console.log("OVERSPENT" + total);
+                    
+                }
+            }
+        }
     };
-})
+});
+
+function calculateTotal(result){
+    let total = 0;
+    for(i = 0; i < result[0].expense.length; i++){
+        //console.log("prices: " + result[0].expense[0].price);
+        total += parseFloat(result[0].expense[i].price);
+    }
+    return total;
+}
 
 app.use('/investments', sessionValidation);
 app.get('/investments', async (req, res) => {
