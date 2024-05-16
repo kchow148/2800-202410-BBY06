@@ -189,10 +189,16 @@ app.post('/settingBudget', async (req, res) => {
     console.log(loginID)
     const schema = Joi.object(
         {
-            budgetname: Joi.string().alphanum().max(20).required(),
-            budgetamount: Joi.boolean
+            budgetname: Joi.string().regex(/^[a-zA-Z0-9-]+$/).max(20).required(),
+            budgetamount: Joi.number().required()
         });
     const validationResult = schema.validate({ budgetname, budgetamount });
+    if (validationResult.error != null) {
+        console.log(validationResult.error.details[0].path[0]);
+        var error = validationResult.error.details[0].message;
+        res.render('setBudgeterror',{error:error});
+        return
+    }
     const changed = await userCollection.updateOne(
         // Filter criteria to find the document to update
         { loginID: loginID },
@@ -207,13 +213,23 @@ app.post('/settingBudget', async (req, res) => {
 });
 
 app.use('/addExpenses', sessionValidation);
-app.get('/addExpenses', (req, res) => {
-    res.render("addExpenses");
+app.get('/addExpenses', async (req, res) => {
+    loginID = req.session.loginID
+    const result = await userCollection.find({loginID : loginID}).project({categories:1}).toArray();
+
+    if (result.length === 0 || result[0].categories === undefined){
+        res.render("addExpenses",{exist:false})
+    }
+    else {
+        category = result[0].categories;
+        res.render("addExpenses",{exist:true, category:category});
+    }
 });
 
 app.post('/addingExpenses', async (req, res) => {
     expense = req.body.expense
-    category = req.body.category;
+    category = decodeURIComponent(req.body.category);
+    console.log(category);
     price = req.body.price;
     loginID = req.session.loginID;
     objexpense = { expense: "expense", date: "date", price: price };
