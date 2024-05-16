@@ -156,12 +156,12 @@ app.get('/home', async (req, res) => {
     }
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
-    if (result[0].categorieslength < 0){
+    if (result[0].categories.length < 0){
         res.render("home",{exist: false});
     }
     else {
     budgets = result[0].categories
-    console.log(budgets);
+    console.log(budgets.length)
     res.render("home",{exist:true,budgets,budgets});
     }
 });
