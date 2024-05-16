@@ -162,6 +162,10 @@ app.get('/logout', (req,res) => {
     res.redirect('/');
 })
 
+app.get('/summary', (req, res) => {
+    res.render('summary');
+});
+
 app.get('*', (req, res)=>{
     res.status(404);
     res.render("404");
