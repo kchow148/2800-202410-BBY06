@@ -6,7 +6,8 @@
       <% for(i=0; i < budgets.length; i++) { %>
       <%- include('templates/budgetcategories', {budgetname: budgets[i].budgetname,budgetamount:budgets[i].budgetamount})  %> 
       <% } %>
-  </ul>
+    </ul>
+  <a class="btn btn-danger w-100 py-2" role="button" href="/logout">Log Out</a>
   <% if (budgets.length < 6) { %>
     <a href="/setBudget"><button type="button" class="btn btn-secondary">
         <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-plus-circle"
@@ -18,7 +19,6 @@
         </svg>
       </button><a/>
       <% } %>
-      <%- include("templates/footer") %>
   <% } else { %>
     <a href="/setBudget"><button type="button" class="btn btn-secondary">
       <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-plus-circle"
@@ -30,3 +30,4 @@
       </svg>
     </button><a/>
     <% } %>
+    <%- include("templates/footer") %>

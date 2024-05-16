@@ -1,0 +1,22 @@
+<%- include("templates/header") %>
+<h1>Long Term Investment</h1>
+<form action="/addingInvestments" method="post">
+    <div class="form-floating">
+        <input name='item' type='text' class="form-control" id="floatingInput" placeholder='Item'>
+        <label for="floatingInput">Item</label>
+    </div>
+    <br>
+    <div class="form-floating">
+        <input name='currentPrice' type='text' class="form-control" id="floatingInput" placeholder='Current Price'>
+        <label for="floatingInput">Current Price</label>
+    </div>
+    <br>
+    <div class="form-floating">
+        <input name='targetYear' type='text' class="form-control" id="floatingInput" placeholder='Target Year'>
+        <label for="floatingInput">Target Year</label>
+    </div>
+    <br>
+    <button class="btn btn-primary w-100 py-2" type="submit">Add Investment</button>
+    <p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
+</form>
+<%- include("templates/footer") %>
