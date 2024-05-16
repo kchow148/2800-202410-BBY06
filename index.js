@@ -261,27 +261,35 @@ app.get('/budgets', async (req, res) => {
 });
 
 app.use('/expenses', sessionValidation);
-app.get('/expenses', async(req, res) =>{
-    res.render("expenses");
+app.get('/expenses', async (req, res) => {
+    loginID = req.session.loginID;
+    const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
+    if (result.length === 0 || result[0].expense === undefined) {
+        res.render("expenses", { exist: false })
+    }
+    else {
+        expense = result[0].expense;
+        res.render("expenses", { expense: expense, exist: true })
+    };
 })
 
 app.use('/investments', sessionValidation);
-app.get('/investments', async(req, res) =>{
+app.get('/investments', async (req, res) => {
     res.render("investments");
 })
 
-app.post('/addingInvestments', async(req, res)=>{
+app.post('/addingInvestments', async (req, res) => {
     var investment = req.body.investment;
     var price = req.body.price;
     var year = req.body.year;
     var loginID = req.session.loginID;
 
-    await investmentCollection.insertOne({investment: investment, price: price, year: year, loginID: loginID});
+    await investmentCollection.insertOne({ investment: investment, price: price, year: year, loginID: loginID });
     res.redirect("/calculations");
 });
 
 app.use('/calculations', sessionValidation);
-app.get('/calculations', async(req, res) =>{
+app.get('/calculations', async (req, res) => {
     res.render("calculations");
 })
 
