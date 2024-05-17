@@ -360,12 +360,13 @@ app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
+    const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, _id: 1}).toArray();
     if (result.length === 0 || result[0].expense === undefined) {
         res.render("expenses", { exist: false })
     }
     else {
         expense = result[0].expense;
-        res.render("expenses", { expense: expense, exist: true })
+        res.render("expenses", { expense: expense, investments: result2, exist: true })
     };
 })
 
@@ -375,12 +376,25 @@ app.get('/investments', async (req, res) => {
 })
 
 app.post('/addingInvestments', async (req, res) => {
-    var investment = req.body.investment;
+    var item = req.body.item;
     var price = req.body.price;
     var year = req.body.year;
     var loginID = req.session.loginID;
+    const schema = Joi.object({
+        item: Joi.string().max(20).required(),
+        price: Joi.string().max(20).required(),
+        year: Joi.number().max(9999).required()
+    });
 
-    await investmentCollection.insertOne({ investment: investment, price: price, year: year, loginID: loginID });
+    const validationResult = schema.validate({item, price, year});
+        
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/investments");
+        return;
+    }
+
+    await investmentCollection.insertOne({ item: item, price: price, year: year, loginID: loginID });
     res.redirect("/calculations");
 });
 
