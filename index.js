@@ -122,31 +122,31 @@ app.get("/passwordReset", (req, res) => {
     res.render("passwordReset");
 });
 
-app.post("/confirmLoginID", async (req, res) => {
-    var loginID = req.body.loginID;
+// app.post("/confirmLoginID", async (req, res) => {
+//     var loginID = req.body.loginID;
 
-    const schema = Joi.string().max(20).required();
-    const validationResult = schema.validate(loginID);
-    if (validationResult.error != null) {
-        console.log(validationResult.error);
-        res.redirect("/passwordReset");
-        return;
-    }
+//     const schema = Joi.string().max(20).required();
+//     const validationResult = schema.validate(loginID);
+//     if (validationResult.error != null) {
+//         console.log(validationResult.error);
+//         res.redirect("/passwordReset");
+//         return;
+//     }
 
-    const result = await userCollection.find({ loginID: loginID }).project({ loginID: 1, password: 1, _id: 1 }).toArray();
+//     const result = await userCollection.find({ loginID: loginID }).project({ loginID: 1, password: 1, _id: 1 }).toArray();
 
-    if (result.length != 1) {
-        console.log("user not found");
-        res.redirect("/passwordReset");
-        return;
-    }
+//     if (result.length != 1) {
+//         console.log("user not found");
+//         res.redirect("/passwordReset");
+//         return;
+//     }
 
-    res.redirect("/passwordChange");
-});
+//     res.redirect("/passwordChange");
+// });
 
-app.get("/passwordChange", (req, res) => {
-    res.render("passwordChange");
-});
+// app.get("/passwordChange", (req, res) => {
+//     res.render("passwordChange");
+// });
 
 app.post("/changingPassword", async (req, res) => {
     var username = req.body.username;
