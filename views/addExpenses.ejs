@@ -1,0 +1,36 @@
+<%- include("templates/header") %>
+<main class="form-signin w-100 m-auto">
+    <form action='/addingExpenses' method='post'>
+      <h1 class="h3 mb-3 fw-normal">Sign Up </h1>
+  
+      <div class="form-floating">
+        <input name='expense' type='text' class="form-control" id="floatingInput" placeholder='Expense'>
+        <label for="floatingInput">Expense</label>
+      </div>
+
+      <div class="input-group mb-3">
+        <div class="input-group-prepend">
+          <label class="input-group-text" for="inputGroupSelect01">Categories</label>
+        </div>
+        <select name="category" class="custom-select" id="inputGroupSelect01">
+          <option selected value="other">other<div class=""></div></option>
+          <% if (exist) { %>
+            <% let i = 0; %>
+            <% for (i = 0; i < category.length; i++) { %> 
+              <%- include("templates/dropdown",{category: category[i]}) %>
+            <% } %>
+          <% } %>
+        </select>
+      </div>
+
+      <div class="form-floating">
+        <input name='price' type="number" step="0.01" class="form-control" min="0" id="floatingPrice" placeholder="$0.00">
+        <label for="floatingPassword">Price</label>
+      </div>
+      <div class="form-check text-start my-3">
+      </div>
+      <button class="btn btn-primary w-100 py-2" type="submit">Add Expense</button>
+      <p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
+    </form>
+  </main>
+<%- include("templates/footer") %>

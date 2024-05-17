@@ -1,0 +1,11 @@
+<%- include("templates/header") %>
+<div class="list-group">
+    <ul class="list-group">
+        <% let i=0; %>
+        <% for(i=0; i < budgets.length; i++) { %>
+        <%- include('templates/budgetcategories', {budgetname: budgets[i].budgetname,budgetamount:budgets[i].budgetamount,expenses:expenses[i]})  %> 
+        <% } %>
+    </ul>
+</div>
+
+<%- include("templates/footer") %>
