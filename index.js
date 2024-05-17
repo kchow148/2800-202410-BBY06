@@ -111,7 +111,7 @@ app.post('/submitUser', async (req, res) => {
 
     var html = "successfully created user";
 
-    res.render("home", { html: html });
+    res.render("/home");
 });
 
 app.get('/login', (req, res) => {
