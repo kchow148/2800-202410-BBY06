@@ -1,11 +1,15 @@
 <%- include("templates/header") %>
-<div class="list-group">
-    <ul class="list-group">
-        <% let i=0; %>
-        <% for(i=0; i < budgets.length; i++) { %>
-        <%- include('templates/budgetcategories', {budgetname: budgets[i].budgetname,budgetamount:budgets[i].budgetamount,expenses:expenses[i]})  %> 
-        <% } %>
-    </ul>
-</div>
-
+<% if (exist) { %> 
+    <div class="list-group">
+        <ul class="list-group">
+            <% let i=0; %>
+            <% for(i=0; i < budgets.length; i++) { %>
+            <%- include('templates/budgetcategories', {budgetname: budgets[i].budgetname,budgetamount:budgets[i].budgetamount,expenses:expenses[i]})  %> 
+            <% } %>
+        </ul>
+    </div>
+<% } else { %>
+    <h1>No budgets made</h1>
+    <a href = "/home"><button>go home</button></a>
+    <% } %> 
 <%- include("templates/footer") %>

@@ -384,7 +384,7 @@ app.get('/budgets', async (req, res) => {
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     console.log(result);
     if (result[0].categories === undefined) {
-        res.redirect("/home");
+        res.render("budgets",{exist:false});
     }
     else {
         budgets = result[0].categories
@@ -412,7 +412,7 @@ app.get('/budgets', async (req, res) => {
             }
             console.log(expenses);
         }
-        res.render("budgets", { budgets: budgets,expenses:expenses});
+        res.render("budgets", { budgets: budgets,expenses:expenses,exist:true});
     }
 });
 
