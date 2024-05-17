@@ -30,6 +30,7 @@ var mongoStore = MongoStore.create({
     }
 });
 const { database } = require('./databaseConnection');
+const { Console } = require('console');
 const userCollection = database.db(mongodb_database).collection('users');
 const expenseCollection = database.db(mongodb_database).collection('expenses');
 const investmentCollection = database.db(mongodb_database).collection('investments');
@@ -216,6 +217,7 @@ app.get('/home', async (req, res) => {
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
             if (expense[0][findexpense] === undefined) {
                 expenses.push(total);
+                console.log("total is now: " + total);
             }
             else {
                 let m = 0;
@@ -223,6 +225,7 @@ app.get('/home', async (req, res) => {
                     total += expense[0][findexpense][m].price;
                 }
                 expenses.push(total);
+                console.log("total is now: " + total);
             }
             console.log(expenses);
         }
@@ -291,14 +294,62 @@ app.post('/addingExpenses', async (req, res) => {
     console.log(category);
     price = req.body.price;
     loginID = req.session.loginID;
-    objexpense = { expense: expense, date: "date", price: Number(price) };
+    //------------------------
+    let total = 0;
+    const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
+    if (result[0].categories === undefined) {
+        res.render("expenses", { exist: false });
+    }
+    else {
+        var overspent = false;
+        budgets = result[0].categories
+        let i = 0;
+        let expenses = [];
+        for (i = 0; i < budgets.length; i++) {
+            var findexpense = budgets[i].budgetname;
+            var find = {};
+            
+            find[findexpense] = 1;
+            var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
+            if (expense[0][findexpense] === undefined) {
+                expenses.push(total);
+                console.log("total is now: " + total);
+            }
+            else {
+                let m = 0;
+                for (m = 0; m < expense[0][findexpense].length; m++) {
+                    total += expense[0][findexpense][m].price;
+                }
+                expenses.push(total);
+                console.log("total is now: " + total);
+
+                // Check if total exceeds budget
+                if (total > budgets[i].budgetamount) {
+                    console.log("total: " + total + " budgets[i].budgetamount: " + budgets[i].budgetamount);
+                    console.log(`Budget exceeded for category: ${findexpense}`);
+                    overspent = true;
+                }
+
+            }
+            console.log("expense: " + expenses);
+        }
+        // console.log("budgets: " + budgets);
+        // console.log("budgets.budgetamount: " + budgets.budgetamount);
+        if(overspent){
+            return res.redirect('/budgetExceeded');
+        }
+    }
+    //------------------------
+    objexpense = { expense: expense, date: new Date().toISOString(), price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
+
     await expenseCollection.findOneAndUpdate(
         { loginID: loginID },
         { $push: catexpense },
         { upsert: true, new: true }
     );
+
     addexpense = { expense: expense, date: "date", price: Number(price), category: category };
     expense = {};
     expense["expense"] = addexpense;
@@ -319,6 +370,11 @@ app.get('/profilePage', async (req, res) => {
     username = result[0].username
     res.render("profilePage", { username: username, loginID: loginID });
 
+});
+
+//if the user goes over budget, direct to here:
+app.get('/budgetExceeded', async (req, res) => {
+    res.render("WarningExceedBudget");
 });
 
 app.use('/budgets', sessionValidation);
@@ -358,6 +414,58 @@ app.get('/budgets', async (req, res) => {
 
 app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
+    // loginID = req.session.loginID;
+    // const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
+    // //const result2 = await expenseCollection.find({ loginID: loginID }).project({ budgetAmount: 1 }).toArray();
+    // const resultUser = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
+    // const budgetsArray = resultUser[0].categories;
+    // console.log("budgetsArray: " + budgetsArray);
+
+    // for(let i = 0; i < resultUser[0].categories.length; i++){
+
+    //     var nameOfCat = resultUser[0].categories[i].budgetname;
+    //     console.log("name of cat: " + nameOfCat);
+
+    //     var projection = {};
+    //     projection[nameOfCat] = 1;
+
+    //     var result2 = await expenseCollection.find({ loginID: loginID }).project(projection).toArray();
+    //     console.log("result2: " + result2);
+    //     if(result2){
+    //         console.log("results2[0]: " + result2[0]);
+    //         console.log("result2[0].price: " + result2[0].price);
+    //     }
+    // }
+    
+    // //logic: find the budget name then use it to select the expenses that have that budget category name, add up all the eppxenses with that name and compare it to the budgets category in the users collection
+
+    // let total = calculateTotal(result);
+    // // console.log("total price: " + total);
+    // // console.log(result[0].expense.length);
+    // // console.log(result[0].expense);
+
+    // if (result.length === 0 || result[0].expense === undefined) {
+    //     res.render("expenses", { exist: false });
+    // }
+    // else {
+    //     expense = result[0].expense;
+    //     res.render("expenses", { expense: expense, exist: true });
+
+    //     if(result[0].expense){
+    //         let total = calculateTotal(result);
+    //         for (const budget of budgetsArray) {
+    //             const budgetName = budget.budgetname;
+    //             const budgetAmount = parseFloat(budget.budgetamount); 
+          
+    //             console.log(`Budget Name: ${budgetName}, Budget Amount: ${budgetAmount}`);
+          
+    //             if(total >= budgetAmount){
+    //                 console.log("OVERSPENT" + total);
+                    
+    //             }
+    //         }
+    //     }
+    // };
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
     const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, _id: 1}).toArray();
@@ -375,7 +483,16 @@ app.get('/expenses', async (req, res) => {
         expense = result[0].expense;
         res.render("expenses", { expense: expense, investments: result2, exist: true })
     };
-})
+});
+
+function calculateTotal(result){
+    let total = 0;
+    for(i = 0; i < result[0].expense.length; i++){
+        //console.log("prices: " + result[0].expense[0].price);
+        total += parseFloat(result[0].expense[i].price);
+    }
+    return total;
+}
 
 app.use('/investments', sessionValidation);
 app.get('/investments', async (req, res) => {
@@ -402,7 +519,7 @@ app.post('/addingInvestments', async (req, res) => {
     }
 
     await investmentCollection.insertOne({ item: item, price: price, year: year, loginID: loginID });
-    res.redirect("/calculations");
+    res.redirect("/expenses");
 });
 
 app.use('/calculations', sessionValidation);
