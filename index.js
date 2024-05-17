@@ -425,10 +425,10 @@ app.get('/expenses', async (req, res) => {
     }
     else if(result2.length === 0){
         expense = result[0].expense;
-        res.render("expenses", {exist: true, exist2: false, expense: expense})
+        res.render("expenses", {exist: true, exist2: false, expense: expense, investments: result2})
     }
     else if(result.length === 0 && result2.length === 0){
-        res.render("expenses", {exist: false, exist2: false})
+        res.render("expenses", {exist: false, exist2: false, investments: result2})
     }
     else {
         expense = result[0].expense;
