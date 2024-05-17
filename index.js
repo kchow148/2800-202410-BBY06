@@ -4,6 +4,8 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require("bcrypt");
 const saltRounds = 12;
+const favicon = require('serve-favicon');
+const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -25,7 +27,10 @@ var mongoStore = MongoStore.create({
 });
 const { database } = require('./databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
+const expenseCollection = database.db(mongodb_database).collection('expenses');
+const investmentCollection = database.db(mongodb_database).collection('investments');
 app.set('view engine', 'ejs');
+app.use(favicon(path.join(__dirname + '/public', 'images', 'logo.ico')));
 
 app.use(session({
     secret: node_session_secret,
@@ -51,6 +56,8 @@ function sessionValidation(req, res, next) {
 }
 
 app.get('/', (req, res) => {
+    console.log(isValidSession(req) == true);
+    console.log(true); 
     if (req.session.authenticated) {
         res.render("index");
     } else {
@@ -106,6 +113,46 @@ app.get('/login', (req, res) => {
     res.render("login");
 });
 
+app.get("/passwordReset", (req, res) => {
+    res.render("passwordReset");
+});
+
+app.post("/confirmLoginID", async (req, res) => {
+    var loginID = req.body.loginID;
+
+    const schema = Joi.string().max(20).required();
+    const validationResult = schema.validate(loginID);
+    if (validationResult.error != null) {
+        console.log(validationResult.error);
+        res.redirect("/passwordReset");
+        return;
+    }
+
+    const result = await userCollection.find({ loginID: loginID }).project({ loginID: 1, password: 1, _id: 1 }).toArray();
+
+    if (result.length != 1) {
+        console.log("user not found");
+        res.redirect("/passwordReset");
+        return;
+    }
+
+    res.redirect("/passwordChange");
+});
+
+app.get("/passwordChange", (req, res) => {
+    res.render("passwordChange");
+});
+
+app.post("/changingPassword", async (req, res) => {
+    var username = req.body.username;
+    var password = req.body.password;
+
+    const schema = Joi.string().max(20).required();
+    var hashedPassword = await bcrypt.hash(password, saltRounds);
+    await userCollection.updateOne({ username: username }, { $set: { password: hashedPassword } });
+    res.redirect("/login");
+    return;
+});
 app.post('/loggingin', async (req, res) => {
     var loginID = req.body.loginID;
     var password = req.body.password;
@@ -144,7 +191,7 @@ app.post('/loggingin', async (req, res) => {
 });
 
 app.use('/home', sessionValidation);
-app.get('/home', (req, res) => {
+app.get('/home', async (req, res) => {
     if (!req.session.authenticated) {
         res.redirect('/login');
     }
