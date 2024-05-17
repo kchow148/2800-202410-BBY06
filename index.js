@@ -361,8 +361,15 @@ app.get('/expenses', async (req, res) => {
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
     const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, _id: 1}).toArray();
-    if (result.length === 0 || result[0].expense === undefined || result2.length === 0) {
-        res.render("expenses", { exist: false })
+    if (result.length === 0 || result[0].expense === undefined) {
+        res.render("expenses", { exist: false, exist2: true, investments: result2})
+    }
+    else if(result2.length === 0){
+        expense = result[0].expense;
+        res.render("expenses", {exist: true, exist2: false, expense: expense})
+    }
+    else if(result.length === 0 && result2.length === 0){
+        res.render("expenses", {exist: false, exist2: false})
     }
     else {
         expense = result[0].expense;
