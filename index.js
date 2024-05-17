@@ -281,7 +281,7 @@ app.use('/addExpenses', sessionValidation);
 app.get('/addExpenses', async (req, res) => {
     loginID = req.session.loginID
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
-
+    console.log(result[0].categories);
     if (result.length === 0 || result[0].categories === undefined) {
         res.render("addExpenses", { exist: false })
     }
@@ -292,11 +292,30 @@ app.get('/addExpenses', async (req, res) => {
 });
 
 app.post('/addingExpenses', async (req, res) => {
-    expense = req.body.expense
+    expenses = req.body.expense
+    console.log(expenses);
     category = decodeURIComponent(req.body.category);
     console.log(category);
     price = req.body.price;
     loginID = req.session.loginID;
+    objexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price) };
+    catexpense = {};
+    catexpense[category] = objexpense;
+    console.log(objexpense);
+    await expenseCollection.findOneAndUpdate(
+        { loginID: loginID },
+        { $push: catexpense },
+        { upsert: true, new: true }
+    );
+    addexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price), category: category };
+    console.log(addexpense);
+    expense = {};
+    expense["expense"] = addexpense;
+    await expenseCollection.findOneAndUpdate(
+        { loginID: loginID },
+        { $push: expense },
+        { upsert: true, new: true }
+    );
     //------------------------
     let total = 0;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
@@ -316,7 +335,6 @@ app.post('/addingExpenses', async (req, res) => {
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
             if (expense[0][findexpense] === undefined) {
                 expenses.push(total);
-                console.log("total is now: " + total);
             }
             else {
                 let m = 0;
@@ -324,7 +342,6 @@ app.post('/addingExpenses', async (req, res) => {
                     total += expense[0][findexpense][m].price;
                 }
                 expenses.push(total);
-                console.log("total is now: " + total);
 
                 // Check if total exceeds budget
                 if (total > budgets[i].budgetamount) {
@@ -334,7 +351,6 @@ app.post('/addingExpenses', async (req, res) => {
                 }
 
             }
-            console.log("expense: " + expenses);
         }
         // console.log("budgets: " + budgets);
         // console.log("budgets.budgetamount: " + budgets.budgetamount);
@@ -343,24 +359,6 @@ app.post('/addingExpenses', async (req, res) => {
         }
     }
     //------------------------
-    objexpense = { expense: expense, date: new Date().toISOString(), price: Number(price) };
-    catexpense = {};
-    catexpense[category] = objexpense;
-
-    await expenseCollection.findOneAndUpdate(
-        { loginID: loginID },
-        { $push: catexpense },
-        { upsert: true, new: true }
-    );
-
-    addexpense = { expense: expense, date: "date", price: Number(price), category: category };
-    expense = {};
-    expense["expense"] = addexpense;
-    await expenseCollection.findOneAndUpdate(
-        { loginID: loginID },
-        { $push: expense },
-        { upsert: true, new: true }
-    );
     res.redirect('/addExpenses');
 });
 
@@ -402,6 +400,9 @@ app.get('/budgets', async (req, res) => {
             if (expense[0] === undefined) {
                 expenses.push(cat);
             }
+            else if (expense[0][findexpense] === undefined) {
+                expenses.push(cat);
+            }
             else {
                 let m = 0;
                 for (m = 0; m < expense[0][findexpense].length; m++) {
@@ -420,6 +421,7 @@ app.get('/expenses', async (req, res) => {
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
     const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, _id: 1}).toArray();
+    console.log(result[0].expense[0]);
     if (result.length === 0 || result[0].expense === undefined) {
         res.render("expenses", { exist: false, exist2: true, investments: result2})
     }
