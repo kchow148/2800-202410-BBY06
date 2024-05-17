@@ -7,6 +7,7 @@
         <button type = "button" class = "btn btn-success w-100 py-2">Long Term Investments</button>
     </a>
     <% if (exist) { %>
+        <h1>Expenses:</h1>
         <div class="list-group">
         <% let i = 0 %>
         <% for (i = 0; i < expense.length; i++) { %> 
@@ -16,4 +17,10 @@
     <% } else { %>
         No expenses recorded
     <% } %>
+    <h1>Investments:</h1>
+    <div class="list-group">
+        <% for (let i = 0; i < investments.length; i++){ %>
+        <%- include('templates/listofinvestments', {investment: investments[i]}) %>
+        <% } %>
+    </div>
 <%- include("templates/footer") %>
