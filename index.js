@@ -170,21 +170,7 @@ app.get('/logout', (req, res) => {
     res.redirect('/');
 })
 
-//Summary Page
 
-// app.get('/summary', (req, res) => {
-//     // Sample data object
-//     const data = {
-//         country: 'Canada',
-//         type: 'CPI',
-//         period: 'Mar 2024',
-//         monthly_rate_pct: 0.63,
-//         yearly_rate_pct: 2.9
-//     };
-
-//     // Render the summary.ejs file and pass the data object
-//     res.render('summary', { data: data });
-// });
 
 
 
