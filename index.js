@@ -523,6 +523,54 @@ app.get('/calculations', async (req, res) => {
     res.render("calculations");
 })
 
+const axios = require('axios');
+
+app.get('/summary', async (req, res) => {
+    try {
+        const country = 'Canada';
+        const options = {
+            url: 'https://api.api-ninjas.com/v1/inflation?country=' + country,
+            headers: {
+                'X-Api-Key': api_key 
+            }
+        };
+
+        const inflationResponse = await requestPromise(options);
+        const inflationDataArray = JSON.parse(inflationResponse);
+        const inflationData = inflationDataArray[0]; 
+
+        const newsApiKey = api_key_2;
+        const newsResponse = await axios.get('https://newsapi.org/v2/everything', {
+            params: {
+                q: `inflation ${country}`,
+                language: 'en', 
+                apiKey: newsApiKey,
+                excludeSources: 'reuters'
+            }
+        });
+        let newsArticles = newsResponse.data.articles;
+
+        if (newsArticles.length === 0) {
+            const generalNewsResponse = await axios.get('https://newsapi.org/v2/everything', {
+                params: {
+                    q: 'inflation',
+                    language: 'en',
+                    apiKey: newsApiKey,
+                    excludeSources: 'reuters'
+                }
+            });
+            newsArticles = generalNewsResponse.data.articles;
+        }
+
+
+
+        res.render('summary', { inflationData, newsArticles});
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while fetching data');
+    }
+});
+
 app.get('*', (req, res) => {
     res.status(404);
     res.render("404");
