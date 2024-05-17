@@ -19,7 +19,6 @@ const mongodb_database = process.env.MONGODB_DATABASE;
 const node_session_secret = process.env.NODE_SESSION_SECRET;
 const api_key = process.env.API_KEY;
 const api_key_2 = process.env.API_KEY_2
-const api_key_3 = process.env.API_KEY_3
 
 const Joi = require("joi");
 const favicon = require('serve-favicon');
@@ -203,12 +202,13 @@ app.get('/summary', async (req, res) => {
 
         const inflationResponse = await requestPromise(options);
         const inflationDataArray = JSON.parse(inflationResponse);
-        const inflationData = inflationDataArray[0];
+        const inflationData = inflationDataArray[0]; 
+
         const newsApiKey = api_key_2;
         const newsResponse = await axios.get('https://newsapi.org/v2/everything', {
             params: {
-                q: `inflation ${country}`, 
-                language: 'en',
+                q: `inflation ${country}`,
+                language: 'en', 
                 apiKey: newsApiKey,
                 excludeSources: 'reuters'
             }
@@ -218,21 +218,24 @@ app.get('/summary', async (req, res) => {
         if (newsArticles.length === 0) {
             const generalNewsResponse = await axios.get('https://newsapi.org/v2/everything', {
                 params: {
-                    q: 'inflation', 
-                    language: 'en', 
+                    q: 'inflation',
+                    language: 'en',
                     apiKey: newsApiKey,
-                    excludeSources: 'reuters' 
+                    excludeSources: 'reuters'
                 }
             });
             newsArticles = generalNewsResponse.data.articles;
         }
 
-        res.render('summary', { inflationData, newsArticles });
+
+
+        res.render('summary', { inflationData, newsArticles});
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('An error occurred while fetching data');
     }
 });
+
 
 
 
