@@ -219,6 +219,9 @@ app.get('/home', async (req, res) => {
                 expenses.push(total);
                 console.log("total is now: " + total);
             }
+            else if (expense[0][findexpense] === undefined) {
+                expenses.push(total);
+            }
             else {
                 let m = 0;
                 for (m = 0; m < expense[0][findexpense].length; m++) {
