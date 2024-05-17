@@ -6,6 +6,10 @@ const bcrypt = require("bcrypt");
 const saltRounds = 12;
 const favicon = require('serve-favicon');
 const path = require('path');
+const api_key = process.env.API_KEY;
+const api_key_2 = process.env.API_KEY_2
+const requestPromise = require('request-promise');
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -405,6 +409,10 @@ app.use('/calculations', sessionValidation);
 app.get('/calculations', async (req, res) => {
     res.render("calculations");
 })
+
+app.get('/location', (req, res) => {
+    res.render("location", { html: '' });
+});
 
 const axios = require('axios');
 
