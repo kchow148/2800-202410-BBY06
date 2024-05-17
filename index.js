@@ -27,6 +27,7 @@ var mongoStore = MongoStore.create({
     }
 });
 const { database } = require('./databaseConnection');
+const { Console } = require('console');
 const userCollection = database.db(mongodb_database).collection('users');
 const expenseCollection = database.db(mongodb_database).collection('expenses');
 const investmentCollection = database.db(mongodb_database).collection('investments');
@@ -289,7 +290,7 @@ app.post('/addingExpenses', async (req, res) => {
         { $push: expense },
         { upsert: true, new: true }
     );
-    res.redirect('/expenses');
+    res.redirect('/addExpenses');
 });
 
 app.use('/profilePage', sessionValidation);
@@ -326,9 +327,26 @@ app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
+    //const result2 = await expenseCollection.find({ loginID: loginID }).project({ budgetAmount: 1 }).toArray();
     const resultUser = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     const budgetsArray = resultUser[0].categories;
     console.log("budgetsArray: " + budgetsArray);
+
+    for(let i = 0; i < resultUser[0].categories.length; i++){
+
+        var nameOfCat = resultUser[0].categories[i].budgetname;
+        console.log("name of cat: " + nameOfCat);
+
+        var projection = {};
+        projection[nameOfCat] = 1;
+
+        var result2 = await expenseCollection.find({ loginID: loginID }).project(projection).toArray();
+        console.log("result2: " + result2);
+        if(result2){
+            console.log("results2[0]: " + result2[0]);
+            console.log("result2[0].price: " + result2[0].price);
+        }
+    }
     
     //logic: find the budget name then use it to select the expenses that have that budget category name, add up all the eppxenses with that name and compare it to the budgets category in the users collection
 
@@ -346,7 +364,7 @@ app.get('/expenses', async (req, res) => {
 
         if(result[0].expense){
             let total = calculateTotal(result);
-            for (const budget of budgetsAmount) {
+            for (const budget of budgetsArray) {
                 const budgetName = budget.budgetname;
                 const budgetAmount = parseFloat(budget.budgetamount); 
           
