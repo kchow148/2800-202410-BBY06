@@ -153,11 +153,11 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
-app.get("/passwordReset", (req, res)=>{
+app.get("/passwordReset", (req, res) => {
     res.render("passwordReset");
 });
 
-app.post("/confirmLoginID", async (req, res)=>{
+app.post("/confirmLoginID", async (req, res) => {
     var loginID = req.body.loginID;
 
     const schema = Joi.string().max(20).required();
@@ -179,17 +179,17 @@ app.post("/confirmLoginID", async (req, res)=>{
     res.redirect("/passwordChange");
 });
 
-app.get("/passwordChange", (req, res)=>{
+app.get("/passwordChange", (req, res) => {
     res.render("passwordChange");
 });
 
-app.post("/changingPassword", async (req, res)=>{
+app.post("/changingPassword", async (req, res) => {
     var username = req.body.username;
     var password = req.body.password;
 
     const schema = Joi.string().max(20).required();
     var hashedPassword = await bcrypt.hash(password, saltRounds);
-    await userCollection.updateOne({username: username}, {$set: {password: hashedPassword}});
+    await userCollection.updateOne({ username: username }, { $set: { password: hashedPassword } });
     res.redirect("/login");
     return;
 });
@@ -201,14 +201,32 @@ app.get('/home', async (req, res) => {
     }
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
-    console.log(result[0].categories)
     if (result[0].categories === undefined) {
         res.render("home", { exist: false });
     }
     else {
         budgets = result[0].categories
-        console.log(budgets.length)
-        res.render("home", { exist: true, budgets, budgets });
+        let i = 0;
+        let expenses = [];
+        for (i = 0; i < budgets.length; i++) {
+            var findexpense = budgets[i].budgetname;
+            var find = {};
+            let total = 0;
+            find[findexpense] = 1;
+            var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
+            if (expense[0][findexpense] === undefined) {
+                expenses.push(total);
+            }
+            else {
+                let m = 0;
+                for (m = 0; m < expense[0][findexpense].length; m++) {
+                    total += expense[0][findexpense][m].price;
+                }
+                expenses.push(total);
+            }
+            console.log(expenses);
+        }
+        res.render("home", { exist: true, budgets: budgets,expenses: expenses });
     }
 });
 
@@ -237,14 +255,14 @@ app.post('/settingBudget', async (req, res) => {
     if (validationResult.error != null) {
         console.log(validationResult.error.details[0].path[0]);
         var error = validationResult.error.details[0].message;
-        res.render('setBudgeterror',{error:error});
+        res.render('setBudgeterror', { error: error });
         return
     }
     const changed = await userCollection.updateOne(
         // Filter criteria to find the document to update
         { loginID: loginID },
         // Update operation
-        { $addToSet: { categories: { $each: [{ budgetname: budgetname, budgetamount: budgetamount }] } } },
+        { $addToSet: { categories: { $each: [{ budgetname: budgetname, budgetamount: Number(budgetamount) }] } } },
         // Options (optional)
     )
     if (changed.modifiedCount == 0) {
@@ -256,14 +274,14 @@ app.post('/settingBudget', async (req, res) => {
 app.use('/addExpenses', sessionValidation);
 app.get('/addExpenses', async (req, res) => {
     loginID = req.session.loginID
-    const result = await userCollection.find({loginID : loginID}).project({categories:1}).toArray();
+    const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
 
-    if (result.length === 0 || result[0].categories === undefined){
-        res.render("addExpenses",{exist:false})
+    if (result.length === 0 || result[0].categories === undefined) {
+        res.render("addExpenses", { exist: false })
     }
     else {
         category = result[0].categories;
-        res.render("addExpenses",{exist:true, category:category});
+        res.render("addExpenses", { exist: true, category: category });
     }
 });
 
@@ -273,7 +291,7 @@ app.post('/addingExpenses', async (req, res) => {
     console.log(category);
     price = req.body.price;
     loginID = req.session.loginID;
-    objexpense = { expense: "expense", date: "date", price: price };
+    objexpense = { expense: expense, date: "date", price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
     await expenseCollection.findOneAndUpdate(
@@ -281,7 +299,7 @@ app.post('/addingExpenses', async (req, res) => {
         { $push: catexpense },
         { upsert: true, new: true }
     );
-    addexpense = { expense: "expense", date: "date", price: price, category: category };
+    addexpense = { expense: expense, date: "date", price: Number(price), category: category };
     expense = {};
     expense["expense"] = addexpense;
     await expenseCollection.findOneAndUpdate(
