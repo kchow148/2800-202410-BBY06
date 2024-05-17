@@ -4,8 +4,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const bcrypt = require("bcrypt");
 const saltRounds = 12;
-const requestPromise = require('request-promise');
-
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -17,13 +15,7 @@ const mongodb_password = process.env.MONGODB_PASSWORD;
 const mongodb_secret = process.env.MONGODB_SESSION_SECRET;
 const mongodb_database = process.env.MONGODB_DATABASE;
 const node_session_secret = process.env.NODE_SESSION_SECRET;
-const api_key = process.env.API_KEY;
-const api_key_2 = process.env.API_KEY_2
-
 const Joi = require("joi");
-const favicon = require('serve-favicon');
-const path = require('path');
-
 app.use(express.urlencoded({ extended: false }));
 var mongoStore = MongoStore.create({
     mongoUrl: `mongodb+srv://${mongodb_user}:${mongodb_password}@${mongodb_host}`,
@@ -34,8 +26,6 @@ var mongoStore = MongoStore.create({
 const { database } = require('./databaseConnection');
 const userCollection = database.db(mongodb_database).collection('users');
 app.set('view engine', 'ejs');
-app.use(favicon(path.join(__dirname + '/public', 'images', 'logo.ico')));
-
 
 app.use(session({
     secret: node_session_secret,
@@ -73,9 +63,6 @@ app.get('/createUser', (req, res) => {
     res.render("createUser", { html: '' });
 });
 
-app.get('/location', (req, res) => {
-    res.render("location", { html: '' });
-});
 
 app.post('/submitUser', async (req, res) => {
     var username = req.body.username;
@@ -86,7 +73,7 @@ app.post('/submitUser', async (req, res) => {
     if (existingUser) {
         var html = "LoginID already taken. Please choose a different one.";
         return res.render("createUser", { html: html });
-    }
+    } 
 
     const schema = Joi.object({
         loginID: Joi.string().alphanum().max(20).required(),
@@ -102,7 +89,7 @@ app.post('/submitUser', async (req, res) => {
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    await userCollection.insertOne({ username: username, loginID: loginID, password: hashedPassword });
+    await userCollection.insertOne({ username: username, loginID: loginID, password: hashedPassword});
     console.log("Inserted user");
 
     // Set session variables for the new user
@@ -234,6 +221,6 @@ app.get('*', (req, res) => {
     res.render("404");
 })
 
-app.listen(port, () => {
+app.listen(port, ()=> {
     console.log(`Server is running on port ${port}`);
 })
