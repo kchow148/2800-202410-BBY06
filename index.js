@@ -398,7 +398,7 @@ app.post('/addingInvestments', async (req, res) => {
     }
 
     await investmentCollection.insertOne({ item: item, price: price, year: year, loginID: loginID });
-    res.redirect("/calculations");
+    res.redirect("/expenses");
 });
 
 app.use('/calculations', sessionValidation);
