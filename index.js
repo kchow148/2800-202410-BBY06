@@ -330,8 +330,29 @@ app.get('/budgets', async (req, res) => {
         res.redirect("/home");
     }
     else {
-        budgets = result[0].categories;
-        res.render("budgets", { budgets: budgets });
+        budgets = result[0].categories
+        let i = 0;
+        let expenses = [];
+        for (i = 0; i < budgets.length; i++) {
+            var findexpense = budgets[i].budgetname;
+            var find = {};
+            let total = 0;
+            let cat =[]
+            find[findexpense] = 1;
+            var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
+            if (expense[0][findexpense] === undefined) {
+                expenses.push(cat);
+            }
+            else {
+                let m = 0;
+                for (m = 0; m < expense[0][findexpense].length; m++) {
+                   cat.push(expense[0][findexpense][m]);
+                }
+                expenses.push(cat);
+            }
+            console.log(expenses);
+        }
+        res.render("budgets", { budgets: budgets,expenses:expenses});
     }
 });
 
