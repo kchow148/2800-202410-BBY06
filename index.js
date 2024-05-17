@@ -370,11 +370,11 @@ app.use('/profilePage', sessionValidation);
 app.get('/profilePage', async (req, res) => {
     loginID = req.session.loginID;
     // const result = userCollection.find({loginID : loginID}).project({username:1, loginID: 1, email: 1}).toArray();
-    const result = await userCollection.find({ loginID: loginID }).project({ username: 1, loginID: 1 }).toArray();
+    const result = await userCollection.find({ loginID: loginID }).project({ username: 1, loginID: 1, email:1 }).toArray();
     console.log(result);
     username = result[0].username
-    res.render("profilePage", { username: username, loginID: loginID });
-
+    email = result[0].email
+    res.render("profilePage", { username: username, loginID: loginID, email:email });
 });
 
 //if the user goes over budget, direct to here:
