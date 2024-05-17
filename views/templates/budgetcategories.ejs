@@ -1,9 +1,18 @@
 <li class = "list-group-item">
-  <div class="card border-primary mb-3" style="max-width: 18rem;">
-      <div class="card-header"></div>
-      <div class="card-body text-primary">
-        <h5 class="card-title"><%= budgetname %></h5>
-        <p class="card-text"><%= budgetamount %></p>
-      </div>
-  </div>
+        <li class="list-group-item h5 mb-3 fw-normal">
+          <h5 class="title"><%= budgetname %>: <%= budgetamount %></h5>
+       </li>
+      <% if (expenses.length > 0) { %>
+        <% let i = 0 %>
+        <% for (i = 0; i < expenses.length; i++) { %> 
+      <li class="list-group-item h5 mb-3 fw-normal">
+        Expense Name : <%= expenses[i].expense %>, Date : <%= expenses[i].date %> <br>
+        Price : <%= expenses[i].price %>
+     </li>
+    <% } %>
+   <% } else { %>
+    <li class="list-group-item h5 mb-3 fw-normal">
+    no transaction recorded
+  </li>
+  <% } %>
 </li>
