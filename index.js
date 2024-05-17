@@ -273,7 +273,7 @@ app.post('/addingExpenses', async (req, res) => {
     console.log(category);
     price = req.body.price;
     loginID = req.session.loginID;
-    objexpense = { expense: "expense", date: "date", price: price };
+    objexpense = { expense: expense, date: "date", price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
     await expenseCollection.findOneAndUpdate(
