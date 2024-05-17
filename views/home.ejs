@@ -4,7 +4,7 @@
     <ul class="list-group list-group-horizontal">
       <% let i=0; %>
       <% for(i=0; i < budgets.length; i++) { %>
-      <%- include('templates/budgetcategories', {budgetname: budgets[i].budgetname,budgetamount:budgets[i].budgetamount})  %> 
+      <%- include('templates/budgetcategorieshome', {budgetname: budgets[i].budgetname,budgetamount:budgets[i].budgetamount, expenses:expenses[i]})  %> 
       <% } %>
     </ul>
   <a class="btn btn-danger w-100 py-2" role="button" href="/logout">Log Out</a>
