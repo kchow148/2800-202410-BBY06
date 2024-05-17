@@ -271,7 +271,7 @@ app.post('/settingBudget', async (req, res) => {
     if (changed.modifiedCount == 0) {
         console.log("budget already exists");
     }
-    res.redirect('/setBudget');
+    res.redirect('/home');
 });
 
 app.use('/addExpenses', sessionValidation);
