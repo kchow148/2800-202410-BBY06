@@ -320,7 +320,8 @@ app.post('/addingExpenses', async (req, res) => {
     let total = 0;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
     if (result[0].categories === undefined) {
-        res.render("expenses", { exist: false });
+        // res.render("expenses", { exist: false });
+        res.redirect("/expenses");
     }
     else {
         var overspent = false;
