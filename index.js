@@ -215,7 +215,7 @@ app.get('/home', async (req, res) => {
             let total = 0;
             find[findexpense] = 1;
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
-            if (expense[0][findexpense] === undefined) {
+            if (expense[0]=== undefined) {
                 expenses.push(total);
                 console.log("total is now: " + total);
             }
@@ -396,7 +396,7 @@ app.get('/budgets', async (req, res) => {
             let cat =[]
             find[findexpense] = 1;
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
-            if (expense[0][findexpense] === undefined) {
+            if (expense[0] === undefined) {
                 expenses.push(cat);
             }
             else {
@@ -414,58 +414,6 @@ app.get('/budgets', async (req, res) => {
 
 app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
-    // loginID = req.session.loginID;
-    // const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
-    // //const result2 = await expenseCollection.find({ loginID: loginID }).project({ budgetAmount: 1 }).toArray();
-    // const resultUser = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
-    // const budgetsArray = resultUser[0].categories;
-    // console.log("budgetsArray: " + budgetsArray);
-
-    // for(let i = 0; i < resultUser[0].categories.length; i++){
-
-    //     var nameOfCat = resultUser[0].categories[i].budgetname;
-    //     console.log("name of cat: " + nameOfCat);
-
-    //     var projection = {};
-    //     projection[nameOfCat] = 1;
-
-    //     var result2 = await expenseCollection.find({ loginID: loginID }).project(projection).toArray();
-    //     console.log("result2: " + result2);
-    //     if(result2){
-    //         console.log("results2[0]: " + result2[0]);
-    //         console.log("result2[0].price: " + result2[0].price);
-    //     }
-    // }
-    
-    // //logic: find the budget name then use it to select the expenses that have that budget category name, add up all the eppxenses with that name and compare it to the budgets category in the users collection
-
-    // let total = calculateTotal(result);
-    // // console.log("total price: " + total);
-    // // console.log(result[0].expense.length);
-    // // console.log(result[0].expense);
-
-    // if (result.length === 0 || result[0].expense === undefined) {
-    //     res.render("expenses", { exist: false });
-    // }
-    // else {
-    //     expense = result[0].expense;
-    //     res.render("expenses", { expense: expense, exist: true });
-
-    //     if(result[0].expense){
-    //         let total = calculateTotal(result);
-    //         for (const budget of budgetsArray) {
-    //             const budgetName = budget.budgetname;
-    //             const budgetAmount = parseFloat(budget.budgetamount); 
-          
-    //             console.log(`Budget Name: ${budgetName}, Budget Amount: ${budgetAmount}`);
-          
-    //             if(total >= budgetAmount){
-    //                 console.log("OVERSPENT" + total);
-                    
-    //             }
-    //         }
-    //     }
-    // };
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
     const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, _id: 1}).toArray();
