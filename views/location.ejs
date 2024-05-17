@@ -1,0 +1,17 @@
+<%- include("templates/header") %> 
+
+<div class="px-4 py-5 my-5 text-center">
+    <h1 class="display-5 fw-bold text-body-emphasis">Select a Location!</h1>
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Dropdown button
+        </button>
+        <ul class="dropdown-menu">
+            <form action="/summary-info" method="post" class="p-4 p-md-5 border rounded-3 bg-body-tertiary">
+          <li><a class="dropdown-item" href="/summary">Canada</a></li>
+          </form>
+        </ul>
+      </div>
+
+      <%- include("templates/footer") %>
+
