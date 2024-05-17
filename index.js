@@ -301,6 +301,7 @@ app.post('/addingExpenses', async (req, res) => {
         res.render("expenses", { exist: false });
     }
     else {
+        var overspent = false;
         budgets = result[0].categories
         let i = 0;
         let expenses = [];
@@ -324,20 +325,19 @@ app.post('/addingExpenses', async (req, res) => {
 
                 // Check if total exceeds budget
                 if (total > budgets[i].budgetamount) {
+                    console.log("total: " + total + " budgets[i].budgetamount: " + budgets[i].budgetamount);
                     console.log(`Budget exceeded for category: ${findexpense}`);
-                    return res.redirect('/budgetExceeded'); // Redirect 
+                    overspent = true;
                 }
 
             }
-            console.log(expenses);
+            console.log("expense: " + expenses);
         }
-        console.log("budgets: " + budgets);
-        console.log("budgets.budgetamount: " + budgets.budgetamount);
-        // if(total >= budgets.budgetamount){
-        //     res.redirect('/addExpenses');
-        //     return;
-        //}
-        // res.render("expenses", { exist: true, budgets: budgets,expenses: expenses });
+        // console.log("budgets: " + budgets);
+        // console.log("budgets.budgetamount: " + budgets.budgetamount);
+        if(overspent){
+            return res.redirect('/budgetExceeded');
+        }
     }
     //------------------------
     objexpense = { expense: expense, date: new Date().toISOString(), price: Number(price) };
