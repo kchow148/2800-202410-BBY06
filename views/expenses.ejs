@@ -19,7 +19,7 @@
     <% } %>
 
     <h1>Investments:</h1>
-    <% if(exist2) { %>
+    <% if(investments.length > 0) { %>
         <div class="list-group">
         <% for (let i = 0; i < investments.length; i++) { %>
             <%- include('templates/listofinvestments', {investment: investments[i]}) %>
