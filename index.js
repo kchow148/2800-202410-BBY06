@@ -319,51 +319,51 @@ app.post('/addingExpenses', async (req, res) => {
         { $push: expense },
         { upsert: true, new: true }
     );
-    //------------------------
-    let total = 0;
-    const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
-    if (result[0].categories === undefined) {
-        // res.render("expenses", { exist: false });
-        res.redirect("/expenses");
-    }
-    else {
-        var overspent = false;
-        budgets = result[0].categories
-        let i = 0;
-        let expenses = [];
-        for (i = 0; i < budgets.length; i++) {
-            var findexpense = budgets[i].budgetname;
-            var find = {};
+    // //------------------------
+    // let total = 0;
+    // const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
+    // if (result[0].categories === undefined) {
+    //     // res.render("expenses", { exist: false });
+    //     res.redirect("/expenses");
+    // }
+    // else {
+    //     var overspent = false;
+    //     budgets = result[0].categories
+    //     let i = 0;
+    //     let expenses = [];
+    //     for (i = 0; i < budgets.length; i++) {
+    //         var findexpense = budgets[i].budgetname;
+    //         var find = {};
             
-            find[findexpense] = 1;
-            var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
-            if (expense[0][findexpense] === undefined) {
-                expenses.push(total);
-            }
-            else {
-                let m = 0;
-                for (m = 0; m < expense[0][findexpense].length; m++) {
-                    total += expense[0][findexpense][m].price;
-                }
-                expenses.push(total);
+    //         find[findexpense] = 1;
+    //         var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
+    //         if (expense[0][findexpense] === undefined) {
+    //             expenses.push(total);
+    //         }
+    //         else {
+    //             let m = 0;
+    //             for (m = 0; m < expense[0][findexpense].length; m++) {
+    //                 total += expense[0][findexpense][m].price;
+    //             }
+    //             expenses.push(total);
 
-                // Check if total exceeds budget
-                if (total > budgets[i].budgetamount) {
-                    console.log("total: " + total + " budgets[i].budgetamount: " + budgets[i].budgetamount);
-                    console.log(`Budget exceeded for category: ${findexpense}`);
-                    overspent = true;
-                }
+    //             // Check if total exceeds budget
+    //             if (total > budgets[i].budgetamount) {
+    //                 console.log("total: " + total + " budgets[i].budgetamount: " + budgets[i].budgetamount);
+    //                 console.log(`Budget exceeded for category: ${findexpense}`);
+    //                 overspent = true;
+    //             }
 
-            }
-        }
-        // console.log("budgets: " + budgets);
-        // console.log("budgets.budgetamount: " + budgets.budgetamount);
-        if(overspent){
-            return res.redirect('/budgetExceeded');
-        }
-    }
-    //------------------------
-    res.redirect('/addExpenses');
+    //         }
+    //     }
+    //     // console.log("budgets: " + budgets);
+    //     // console.log("budgets.budgetamount: " + budgets.budgetamount);
+    //     if(overspent){
+    //         return res.redirect('/budgetExceeded');
+    //     }
+    // }
+    // //------------------------
+    res.redirect('/expenses');
 });
 
 app.use('/profilePage', sessionValidation);
