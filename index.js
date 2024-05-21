@@ -335,17 +335,17 @@ app.post('/addingExpenses', async (req, res) => {
             var findexpense = budgets[i].budgetname;
             var find = {};
             
-    //         find[findexpense] = 1;
-    //         var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
-    //         if (expense[0][findexpense] === undefined) {
-    //             expenses.push(total);
-    //         }
-    //         else {
-    //             let m = 0;
-    //             for (m = 0; m < expense[0][findexpense].length; m++) {
-    //                 total += expense[0][findexpense][m].price;
-    //             }
-    //             expenses.push(total);
+            find[findexpense] = 1;
+            var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
+            if (expense[0][findexpense] === undefined) {
+                expenses.push(total);
+            }
+            else {
+                let m = 0;
+                for (m = 0; m < expense[0][findexpense].length; m++) {
+                    total += expense[0][findexpense][m].price;
+                }
+                expenses.push(total);
 
                 // Check if total exceeds budget
                 if (total > budgets[i].budgetamount) {
