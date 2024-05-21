@@ -79,6 +79,8 @@ app.get('/createUser', (req, res) => {
 app.post('/submitUser', async (req, res) => {
     var username = req.body.username;
     var loginID = req.body.loginID;
+    var email = req.body.email;
+
     var password = req.body.password;
 
     const existingUser = await userCollection.findOne({ loginID: loginID });
@@ -89,10 +91,11 @@ app.post('/submitUser', async (req, res) => {
 
     const schema = Joi.object({
         loginID: Joi.string().alphanum().max(20).required(),
+        email: Joi.string().email().required(),
         password: Joi.string().max(20).required()
     });
 
-    const validationResult = schema.validate({ loginID, password });
+    const validationResult = schema.validate({ loginID, email, password });
     if (validationResult.error) {
         console.log(validationResult.error);
         res.redirect("/createUser");
@@ -101,7 +104,7 @@ app.post('/submitUser', async (req, res) => {
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    await userCollection.insertOne({ username: username, loginID: loginID, password: hashedPassword});
+    await userCollection.insertOne({ username: username, loginID: loginID, email: email, password: hashedPassword});
     console.log("Inserted user");
 
     // Set session variables for the new user
@@ -332,17 +335,17 @@ app.post('/addingExpenses', async (req, res) => {
             var findexpense = budgets[i].budgetname;
             var find = {};
             
-            find[findexpense] = 1;
-            var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
-            if (expense[0][findexpense] === undefined) {
-                expenses.push(total);
-            }
-            else {
-                let m = 0;
-                for (m = 0; m < expense[0][findexpense].length; m++) {
-                    total += expense[0][findexpense][m].price;
-                }
-                expenses.push(total);
+    //         find[findexpense] = 1;
+    //         var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
+    //         if (expense[0][findexpense] === undefined) {
+    //             expenses.push(total);
+    //         }
+    //         else {
+    //             let m = 0;
+    //             for (m = 0; m < expense[0][findexpense].length; m++) {
+    //                 total += expense[0][findexpense][m].price;
+    //             }
+    //             expenses.push(total);
 
                 // Check if total exceeds budget
                 if (total > budgets[i].budgetamount) {
@@ -366,11 +369,11 @@ app.use('/profilePage', sessionValidation);
 app.get('/profilePage', async (req, res) => {
     loginID = req.session.loginID;
     // const result = userCollection.find({loginID : loginID}).project({username:1, loginID: 1, email: 1}).toArray();
-    const result = await userCollection.find({ loginID: loginID }).project({ username: 1, loginID: 1 }).toArray();
+    const result = await userCollection.find({ loginID: loginID }).project({ username: 1, loginID: 1, email:1 }).toArray();
     console.log(result);
     username = result[0].username
-    res.render("profilePage", { username: username, loginID: loginID });
-
+    email = result[0].email
+    res.render("profilePage", { username: username, loginID: loginID, email:email });
 });
 
 //if the user goes over budget, direct to here:
