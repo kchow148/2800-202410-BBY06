@@ -1,4 +1,5 @@
 <%- include("templates/header") %>
+<a href="/setBudget"><button class="btn btn-primary py-2">Set New budget</button></a>
 <% if (exist) { %> 
     <div class="list-group">
         <ul class="list-group">
@@ -10,6 +11,6 @@
     </div>
 <% } else { %>
     <h1>No budgets made</h1>
-    <a href = "/home"><button>go home</button></a>
+    <a href = "/home"><button class="btn btn-primary py-2">go home</button></a>
     <% } %> 
 <%- include("templates/footer") %>

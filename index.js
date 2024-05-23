@@ -220,7 +220,7 @@ app.get('/home', async (req, res) => {
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
             if (expense[0]=== undefined) {
                 expenses.push(total);
-                console.log("total is now: " + total);
+                // console.log("total is now: " + total);
             }
             else if (expense[0][findexpense] === undefined) {
                 expenses.push(total);
@@ -231,9 +231,9 @@ app.get('/home', async (req, res) => {
                     total += expense[0][findexpense][m].price;
                 }
                 expenses.push(total);
-                console.log("total is now: " + total);
+                // console.log("total is now: " + total);
             }
-            console.log(expenses);
+            // console.log(expenses);
         }
         res.render("home", { exist: true, budgets: budgets,expenses: expenses });
     }
@@ -247,14 +247,27 @@ app.get('/logout', (req, res) => {
 
 app.use('/setBudget', sessionValidation);
 app.get('/setBudget', (req, res) => {
-    res.render("setBudget");
+    res.render("setBudget",{error: false});
 })
 
 app.post('/settingBudget', async (req, res) => {
     budgetname = req.body.name;
     budgetamount = req.body.amount;
     loginID = req.session.loginID;
-    console.log(loginID)
+    const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
+    console.log(result[0].categories);
+    if (result[0].categories === undefined) {
+
+    } else {
+        let i = 0;
+        for (i = 0; i < result[0].categories.length; i++){
+            if (result[0].categories[0].budgetname === budgetname){
+                console.log("budget already made");
+                res.render("setBudget",{error: "budget already exists"});
+                return;
+            }
+        }
+    };
     const schema = Joi.object(
         {
             budgetname: Joi.string().regex(/^[a-zA-Z0-9-]+$/).max(20).required(),
@@ -274,9 +287,6 @@ app.post('/settingBudget', async (req, res) => {
         { $addToSet: { categories: { $each: [{ budgetname: budgetname, budgetamount: Number(budgetamount) }] } } },
         // Options (optional)
     )
-    if (changed.modifiedCount == 0) {
-        console.log("budget already exists");
-    }
     res.redirect('/home');
 });
 
