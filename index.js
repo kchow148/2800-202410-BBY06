@@ -220,7 +220,7 @@ app.get('/home', async (req, res) => {
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
             if (expense[0]=== undefined) {
                 expenses.push(total);
-                console.log("total is now: " + total);
+                console.log("[/home] total is now: " + total);
             }
             else if (expense[0][findexpense] === undefined) {
                 expenses.push(total);
@@ -296,22 +296,22 @@ app.get('/addExpenses', async (req, res) => {
 
 app.post('/addingExpenses', async (req, res) => {
     expenses = req.body.expense
-    console.log(expenses);
+    console.log("expenses: " + expenses);
     category = decodeURIComponent(req.body.category);
-    console.log(category);
+    console.log("category: " + category);
     price = req.body.price;
     loginID = req.session.loginID;
     objexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
-    console.log(objexpense);
+    console.log("objexpense: " + objexpense);
     await expenseCollection.findOneAndUpdate(
         { loginID: loginID },
         { $push: catexpense },
         { upsert: true, new: true }
     );
     addexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price), category: category };
-    console.log(addexpense);
+    console.log("addexpense: " + addexpense);
     expense = {};
     expense["expense"] = addexpense;
     await expenseCollection.findOneAndUpdate(
@@ -321,8 +321,8 @@ app.post('/addingExpenses', async (req, res) => {
     );
     //------------------------
     //set to true for the sake of testing
-    var overspent = true;
-    let total = 0;
+    var overspent = false;
+    //  let total = 0;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
     if (result[0].categories === undefined) {
         res.render("expenses", { exist: false });
@@ -335,22 +335,24 @@ app.post('/addingExpenses', async (req, res) => {
         for (i = 0; i < budgets.length; i++) {
             var findexpense = budgets[i].budgetname;
             var find = {};
-            
+            let total = 0;
             find[findexpense] = 1;
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
             if (expense[0][findexpense] === undefined) {
                 expenses.push(total);
+                console.log("[/addingExpenses] total is now: " + total);
             }
             else {
                 let m = 0;
                 for (m = 0; m < expense[0][findexpense].length; m++) {
                     total += expense[0][findexpense][m].price;
                 }
-                expenses.push(total);
+                //console.log("expense[0][findexpense][m].price: " + expense[0][findexpense][m].price);
+                expenses.push("expense.push total: " + total);
 
                 // Check if total exceeds budget
-                if (total > budgets[i].budgetamount) {
-                    console.log("total: " + total + " budgets[i].budgetamount: " + budgets[i].budgetamount);
+                if (total > budgets[i].budgetamount && category == result[0].categories[i].budgetname) {
+                    console.log(`total: ` + total + ` budgets[${i}].budgetamount: ` + budgets[i].budgetamount);
                     console.log(`Budget exceeded for category: ${findexpense}`);
                     overspent = true;
                 }
