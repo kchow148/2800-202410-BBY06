@@ -362,7 +362,11 @@ app.post('/addingExpenses', async (req, res) => {
     //------------------------
     if(overspent){
         // This part needs to be changed to activate the modal
-        res.redirect('/budgetExceeded');
+        // res.redirect('/budgetExceeded');
+        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
+            keyboard: false
+        });
+        myModal.show();
     }
     else{
         res.redirect('/addExpenses');
