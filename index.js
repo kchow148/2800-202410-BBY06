@@ -455,10 +455,13 @@ app.get('/investments', async (req, res) => {
     res.render("investments");
 })
 
-app.post('/addingInvestments', async (req, res) => {
+app.use('/calculations', sessionValidation);
+
+app.post('/calculations', async (req, res) => {
     var item = req.body.item;
     var price = req.body.price;
     var year = req.body.year;
+    var interest = req.body.interest;
     var loginID = req.session.loginID;
     const schema = Joi.object({
         item: Joi.string().max(20).required(),
@@ -466,7 +469,7 @@ app.post('/addingInvestments', async (req, res) => {
         year: Joi.number().max(9999).required()
     });
 
-    const validationResult = schema.validate({item, price, year});
+    const validationResult = schema.validate({item, price, year, interest, loginID});
         
     if (validationResult.error != null) {
         console.log(validationResult.error);
@@ -474,13 +477,8 @@ app.post('/addingInvestments', async (req, res) => {
         return;
     }
 
-    await investmentCollection.insertOne({ item: item, price: price, year: year, loginID: loginID });
-    res.redirect("/expenses");
-});
-
-app.use('/calculations', sessionValidation);
-app.get('/calculations', async (req, res) => {
-    res.render("calculations");
+    await investmentCollection.find().project({item: 1, price: 1, year: 1, interest: 1, loginID: 1}).toArray();
+    res.render("calculations", {item: item, year : year, price : price});
 })
 
 app.get('/location', (req, res) => {
