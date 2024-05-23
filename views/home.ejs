@@ -45,6 +45,29 @@
   </div>
 <% } %>
 <a class="btn btn-danger w-100 py-2" role="button" href="/logout">Log Out</a>
+<div id="money" class="content">
+  <!-- Repeated money elements -->
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+  <div class="money">$</div>
+</div>
 
 
 <script>
@@ -54,8 +77,11 @@
     console.log(clicks);
     if (clicks > 2) {
       clicks = 0;
-      alert("hello");
-      console.log("it worked");
+      const moneyContainer = document.getElementById('money');
+      moneyContainer.style.display = 'block'
+      setTimeout(() => {
+        moneyContainer.style.display = 'none';
+    }, 10000); // 5 seconds
     }
   }
 </script>
