@@ -292,17 +292,20 @@ app.post('/settingBudget', async (req, res) => {
 
 app.use('/addExpenses', sessionValidation);
 app.get('/addExpenses', async (req, res) => {
+    url = req.query.error;
+    console.log(url);
     loginID = req.session.loginID
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     console.log(result[0].categories);
     if (result.length === 0 || result[0].categories === undefined) {
-        res.render("addExpenses", { exist: false })
+        res.render("addExpenses", { exist: false, error: url })
     }
     else {
         category = result[0].categories;
-        res.render("addExpenses", { exist: true, category: category });
+        res.render("addExpenses", { exist: true, category: category, error: url});
     }
 });
+
 
 app.post('/addingExpenses', async (req, res) => {
     expenses = req.body.expense
@@ -311,6 +314,21 @@ app.post('/addingExpenses', async (req, res) => {
     console.log(category);
     price = req.body.price;
     loginID = req.session.loginID;
+    const schema = Joi.object (
+        {
+            
+            expenses: Joi.string().required(),
+            price: Joi.number().required()
+        });
+    const validationResult = schema.validate({ expenses, price });
+    if (validationResult.error != null) {
+        console.log(validationResult.error.details[0].path[0]);
+        var error = validationResult.error.details[0].message;
+        console.log(validationResult);
+        res.redirect(`/addExpenses/?error=${error}`);
+        return;
+    } 
+
     objexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
