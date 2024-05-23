@@ -1,5 +1,5 @@
 <%- include("templates/header") %>
-<h1>Welcome to home page!</h1>
+<h1>Welcome to h<button onclick="eggie()">o</button>me page!</h1>
 <% if (exist) { %>
   <div class="d-flex flex-wrap"> <!-- Use flex-wrap to ensure items wrap into multiple rows -->
     <% for(let i = 0; i < budgets.length; i++) { %>
@@ -45,4 +45,18 @@
   </div>
 <% } %>
 <a class="btn btn-danger w-100 py-2" role="button" href="/logout">Log Out</a>
+
+
+<script>
+  var clicks = 0;
+  function eggie() {
+    clicks++;
+    console.log(clicks);
+    if (clicks > 2) {
+      clicks = 0;
+      alert("hello");
+      console.log("it worked");
+    }
+  }
+</script>
 <%- include("templates/footer") %>
