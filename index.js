@@ -12,6 +12,8 @@ const requestPromise = require('request-promise');
 
 
 const app = express();
+app.use(express.static(__dirname + '/public'));
+
 const port = process.env.PORT || 3000;
 const expireTime = 1 * 60 * 60 * 1000;
 
