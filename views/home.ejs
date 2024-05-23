@@ -1,34 +1,48 @@
 <%- include("templates/header") %>
-  <h1>Welcome to home page!</h1>
-  <% if (exist) { %>
-    <ul class="list-group list-group-horizontal">
-      <% let i=0; %>
-      <% for(i=0; i < budgets.length; i++) { %>
-      <%- include('templates/budgetcategorieshome', {budgetname: budgets[i].budgetname,budgetamount:budgets[i].budgetamount, expenses:expenses[i]})  %> 
-      <% } %>
-  <% if (budgets.length < 6) { %>
-    <a href="/setBudget"><button type="button" class="btn btn-secondary">
-        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-plus-circle"
-          viewBox="0 0 16 16" data-toggle="tooltip" data-placement="top" title="Click to add">
-          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
-          <path
-            d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4">
-          </path>
-        </svg>
-      </button><a/>
-      <% } %>
-    </ul>
-  <% } else { %>
-    <a href="/setBudget"><button type="button" class="btn btn-secondary">
-      <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-plus-circle"
-        viewBox="0 0 16 16" data-toggle="tooltip" data-placement="top" title="Click to add">
-        <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
-        <path
-          d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4">
-        </path>
-      </svg>
-    </button><a/>
+<h1>Welcome to home page!</h1>
+<% if (exist) { %>
+  <div class="d-flex flex-wrap"> <!-- Use flex-wrap to ensure items wrap into multiple rows -->
+    <% for(let i = 0; i < budgets.length; i++) { %>
+      <div class="col-sm-6 col-md-6 col-lg-6 mb-3"> <!-- Adjust column width for responsiveness -->
+        <% if (budgets[i]) { %> <!-- Check if budget exists -->
+          <%- include('templates/budgetcategorieshome', {budgetname: budgets[i].budgetname, budgetamount: budgets[i].budgetamount, expenses: expenses[i]})  %> 
+        <% } %>
+      </div>
     <% } %>
-    <a class="btn btn-danger w-100 py-2" role="button" href="/logout">Log Out</a>
-
-    <%- include("templates/footer") %>
+  </div>
+  <% if (budgets.length < 6) { %>
+    <div class="row">
+      <div class="col-sm-6 col-md-6 col-lg-6 mb-3 text-center"> <!-- Adjust column width for responsiveness and center the button -->
+        <a href="/setBudget" class="add-budget-btn">
+          <button type="button" class="btn btn-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-plus-circle"
+              viewBox="0 0 16 16" data-toggle="tooltip" data-placement="top" title="Click to add">
+              <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+              <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4">
+              </path>
+            </svg>
+          </button>
+        </a>
+      </div>
+    </div>
+  <% } %>
+<% } else { %>
+  <div class="row">
+    <div class="col-sm-6 col-md-6 col-lg-6 mb-3"> <!-- Adjust column width for responsiveness -->
+      <a href="/setBudget" class="add-budget-btn">
+        <button type="button" class="btn btn-secondary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="bi bi-plus-circle"
+            viewBox="0 0 16 16" data-toggle="tooltip" data-placement="top" title="Click to add">
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"></path>
+            <path
+              d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4">
+            </path>
+          </svg>
+        </button>
+      </a>
+    </div>
+  </div>
+<% } %>
+<a class="btn btn-danger w-100 py-2" role="button" href="/logout">Log Out</a>
+<%- include("templates/footer") %>
