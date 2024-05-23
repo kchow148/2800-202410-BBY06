@@ -1,4 +1,7 @@
 <%- include("templates/header") %>
+
+<%- include("templates/warningModal") %>
+
     <h1>Type of Purchase</h1>
     <a href="/addExpenses">
         <button type = "button" class = "btn btn-success w-100 py-2">Short Term Purchases</button>
@@ -29,4 +32,9 @@
     <% } else { %>
         No investments recorded
     <% } %>
+
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Launch demo modal
+    </button>
+    
 <%- include("templates/footer") %>

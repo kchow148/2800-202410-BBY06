@@ -320,7 +320,8 @@ app.post('/addingExpenses', async (req, res) => {
         { upsert: true, new: true }
     );
     //------------------------
-    var overspent = false;
+    //set to true for the sake of testing
+    var overspent = true;
     let total = 0;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
     if (result[0].categories === undefined) {
@@ -358,6 +359,7 @@ app.post('/addingExpenses', async (req, res) => {
     }
     //------------------------
     if(overspent){
+        // This part needs to be changed to activate the modal
         res.redirect('/budgetExceeded');
     }
     else{

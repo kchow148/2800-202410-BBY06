@@ -1,0 +1,21 @@
+body {
+    background-image: linear-gradient(to bottom, 
+                                      #32CD32,  /* Lime Green */
+                                      #2ECC40,  /* Forest Green */
+                                      #1E8652,  /* Sea Green */
+                                      #1A1D23   /* Dark Green */
+                                      );
+    background-size: 100% 300px;
+    background-position: 0% 100%;
+    transition: background-position 10s linear;
+    animation: move-background 10s infinite;
+  }
+  
+  @keyframes move-background {
+    0% {
+      background-position: 0% 100%;
+    }
+    100% {
+      background-position: 100% 100%;
+    }
+  }
