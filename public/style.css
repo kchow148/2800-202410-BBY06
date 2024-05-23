@@ -1,12 +1,12 @@
-.background-animation{
+/* .background-animation{
     background-image: linear-gradient(to bottom, 
                                       #5585b5,  
                                       #53a8b6,  
                                       #79c2d0,  
                                       #bbe4e9   
                                       );
-    /* background-size: 100% 300px;
-    background-position: 0% 100%; */
+    background-size: 100% 300px;
+    background-position: 0% 100%;
     transition: background-position 10s linear;
     animation: move-background 10s infinite;
 
@@ -15,6 +15,7 @@
     position: fixed;
     height: 100vh;
     width: 100vw;
+    z-index: -10;
 }
   
 @keyframes move-background {
@@ -24,4 +25,23 @@
   100% {
     background-position: 100% 100%;
   }
-}
+} */
+@keyframes color {
+    0%   { background: #33CCCC; }
+    12.5%  { background: #3de8e8; }
+    25% { background: #54ffff; }
+    37.5% { background: #73ffff; }
+    50% { background: #3dffff; }
+    62.5% { background: #37e7e7; }
+    75% { background: #1de0e0; }
+    87.5% { background: #38eaea; }
+    100% { background: #33CCCC; }
+  }
+  
+  body {
+    background: #33CCCC; /* Fallback */
+    animation: color 10s infinite linear;
+    text-align: center;
+    padding: 2em;
+  }
+  
