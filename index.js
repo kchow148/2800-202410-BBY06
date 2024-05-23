@@ -231,9 +231,9 @@ app.get('/home', async (req, res) => {
                     total += expense[0][findexpense][m].price;
                 }
                 expenses.push(total);
-                console.log("total is now: " + total);
+                // console.log("total is now: " + total);
             }
-            console.log(expenses);
+            // console.log(expenses);
         }
         res.render("home", { exist: true, budgets: budgets,expenses: expenses });
     }
@@ -247,14 +247,27 @@ app.get('/logout', (req, res) => {
 
 app.use('/setBudget', sessionValidation);
 app.get('/setBudget', (req, res) => {
-    res.render("setBudget");
+    res.render("setBudget",{error: false});
 })
 
 app.post('/settingBudget', async (req, res) => {
     budgetname = req.body.name;
     budgetamount = req.body.amount;
     loginID = req.session.loginID;
-    console.log(loginID)
+    const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
+    console.log(result[0].categories);
+    if (result[0].categories === undefined) {
+
+    } else {
+        let i = 0;
+        for (i = 0; i < result[0].categories.length; i++){
+            if (result[0].categories[0].budgetname === budgetname){
+                console.log("budget already made");
+                res.render("setBudget",{error: "budget already exists"});
+                return;
+            }
+        }
+    };
     const schema = Joi.object(
         {
             budgetname: Joi.string().regex(/^[a-zA-Z0-9-]+$/).max(20).required(),
@@ -274,25 +287,25 @@ app.post('/settingBudget', async (req, res) => {
         { $addToSet: { categories: { $each: [{ budgetname: budgetname, budgetamount: Number(budgetamount) }] } } },
         // Options (optional)
     )
-    if (changed.modifiedCount == 0) {
-        console.log("budget already exists");
-    }
     res.redirect('/home');
 });
 
 app.use('/addExpenses', sessionValidation);
 app.get('/addExpenses', async (req, res) => {
+    url = req.query.error;
+    console.log(url);
     loginID = req.session.loginID
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     console.log(result[0].categories);
     if (result.length === 0 || result[0].categories === undefined) {
-        res.render("addExpenses", { exist: false })
+        res.render("addExpenses", { exist: false, error: url })
     }
     else {
         category = result[0].categories;
-        res.render("addExpenses", { exist: true, category: category });
+        res.render("addExpenses", { exist: true, category: category, error: url});
     }
 });
+
 
 app.post('/addingExpenses', async (req, res) => {
     expenses = req.body.expense
@@ -301,6 +314,21 @@ app.post('/addingExpenses', async (req, res) => {
     console.log("category: " + category);
     price = req.body.price;
     loginID = req.session.loginID;
+    const schema = Joi.object (
+        {
+            
+            expenses: Joi.string().required(),
+            price: Joi.number().required()
+        });
+    const validationResult = schema.validate({ expenses, price });
+    if (validationResult.error != null) {
+        console.log(validationResult.error.details[0].path[0]);
+        var error = validationResult.error.details[0].message;
+        console.log(validationResult);
+        res.redirect(`/addExpenses/?error=${error}`);
+        return;
+    } 
+
     objexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
@@ -363,10 +391,7 @@ app.post('/addingExpenses', async (req, res) => {
     if(overspent){
         // This part needs to be changed to activate the modal
         // res.redirect('/budgetExceeded');
-        var myModal = new bootstrap.Modal(document.getElementById('exampleModal'), {
-            keyboard: false
-        });
-        myModal.show();
+        res.redirect(`/expenses/?overspent=${overspent}`);
     }
     else{
         res.redirect('/addExpenses');
@@ -429,11 +454,12 @@ app.get('/budgets', async (req, res) => {
 
 app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
+    overspent = req.query.overspent;
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
     const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, _id: 1}).toArray();
     if (result.length === 0 || result[0].expense === undefined) {
-        res.render("expenses", { exist: false, exist2: true, investments: result2})
+        res.render("expenses", { exist: false, exist2: true, investments: result2, overspent: overspent})
     }
     else if(result2.length === 0){
         expense = result[0].expense;
