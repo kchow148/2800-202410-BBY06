@@ -3,6 +3,7 @@ body {
     overflow-x: hidden;
     background: #2c3e50; /* Dark background for better visibility */
     font-family: Arial, sans-serif;
+    padding-bottom: 100px;
 }
 
 .content{
