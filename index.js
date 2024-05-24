@@ -516,30 +516,29 @@ app.post('/calculations', async (req, res) => {
     res.render("calculations", {item: item, year : year, price : newPrice, interest: interest});
 })
 
-app.get('/location', (req, res) => {
-    res.render("location", { html: '' });
-});
 
 const axios = require('axios');
 
 app.get('/summary', async (req, res) => {
     try {
-        const country = 'Canada';
+        const selectedCountry = req.query.country; // Get the selected country from the query parameters
+        console.log(selectedCountry);
+        // Fetch inflation data for the selected country
         const options = {
-            url: 'https://api.api-ninjas.com/v1/inflation?country=' + country,
+            url: `https://api.api-ninjas.com/v1/inflation?country=${selectedCountry}`,
             headers: {
                 'X-Api-Key': api_key 
             }
         };
-
         const inflationResponse = await requestPromise(options);
         const inflationDataArray = JSON.parse(inflationResponse);
         const inflationData = inflationDataArray[0]; 
 
+        // Fetch news articles related to inflation
         const newsApiKey = api_key_2;
         const newsResponse = await axios.get('https://newsapi.org/v2/everything', {
             params: {
-                q: `inflation ${country}`,
+                q: `inflation ${selectedCountry}`, // Search for inflation news related to the selected country
                 language: 'en', 
                 apiKey: newsApiKey,
                 excludeSources: 'reuters'
@@ -548,6 +547,7 @@ app.get('/summary', async (req, res) => {
         let newsArticles = newsResponse.data.articles;
 
         if (newsArticles.length === 0) {
+            // If no news articles found, fetch general inflation news
             const generalNewsResponse = await axios.get('https://newsapi.org/v2/everything', {
                 params: {
                     q: 'inflation',
@@ -559,14 +559,15 @@ app.get('/summary', async (req, res) => {
             newsArticles = generalNewsResponse.data.articles;
         }
 
-
-
-        res.render('summary', { inflationData, newsArticles});
+        // Render the 'summary' template with the fetched data and selected country
+        res.render('summary', { selectedCountry, inflationData, newsArticles });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('An error occurred while fetching data');
     }
 });
+
+
 
 app.get('*', (req, res) => {
     res.status(404);
