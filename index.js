@@ -438,7 +438,7 @@ app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
-    const result2 = await investmentCollection.find({ loginID: loginID }).project({ item: 1, price: 1, year: 1, interest: 1, _id: 1 }).toArray();
+    const result2 = await investmentCollection.find({ loginID: loginID }).project({ item: 1, price: 1, year: 1, interest: 1, savings: 1, _id: 1 }).toArray();
     if (result.length === 0 || result[0].expense === undefined) {
         res.render("expenses", { exist: false, exist2: true, investments: result2 })
     }
@@ -493,10 +493,10 @@ app.post('/calculations', async (req, res) => {
     var currentYear = 2024;
     var yearDifference = year - currentYear;
     var x = (1 + interest / 100);
-    var newPrice = parseInt((price * (Math.pow(x, yearDifference))).toFixed(2));
+    var newPrice = parseFloat((price * (Math.pow(x, yearDifference))).toFixed(2));
 
     console.log(typeof (newPrice));
-    await investmentCollection.insertOne({ item: item, price: newPrice, year: year, loginID: loginID });
+    await investmentCollection.insertOne({ item: item, price: newPrice, year: year, savings: 0, loginID: loginID });
     res.render("calculations", { item: item, year: year, price: newPrice, interest: interest });
 })
 
@@ -514,6 +514,12 @@ app.post('/savings', async (req, res) =>{
         res.redirect("/calculations");
         return;
     }
+    console.log(price);
+    console.log(savings);
+    var targetSavings = price - savings;
+    console.log(targetSavings);
+    await investmentCollection.findOneAndUpdate({savings : targetSavings});
+    res.redirect("/expenses");
 })
 
 

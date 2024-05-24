@@ -1,7 +1,8 @@
 <li class="list-group-item h5 mb-3 fw-normal">
     Item: <%= investment.item %><br>
     Price : <%= investment.price %><br>
-    Target Year: <%= investment.year %>
+    Target Year: <%= investment.year %><br>
+    Required Savings per Month: <%= investment.savings %>
     <a href = "/deleteInvestment/?item=<%= investment.item %>">
         <button class="btn btn-danger float-end">Delete Investment</button>  
     </a>
