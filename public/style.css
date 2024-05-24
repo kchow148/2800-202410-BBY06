@@ -1,4 +1,4 @@
-@keyframes color {
+/* @keyframes color {
     0%   { background: #33CCCC; }
     12.5%  { background: #3de8e8; }
     25% { background: #54ffff; }
@@ -11,11 +11,13 @@
   }
   
   body {
-    background: #33CCCC; /* Fallback */
+    background: #33CCCC; 
     animation: color 10s infinite linear;
     text-align: center;
     padding: 2em;
-  }body {
+  } */
+  
+  body {
     margin: 0;
     overflow-x: hidden;
     background: #2c3e50; /* Dark background for better visibility */

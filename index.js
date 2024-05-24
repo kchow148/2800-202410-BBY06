@@ -320,7 +320,7 @@ app.post('/addingExpenses', async (req, res) => {
         { $push: catexpense },
         { upsert: true, new: true }
     );
-    addexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price), category: category };
+    addexpense = { expense: expenses, date: new Date(), price: Number(price), category: category };
     console.log("addexpense: " + addexpense);
     expense = {};
     expense["expense"] = addexpense;
@@ -361,7 +361,7 @@ app.post('/addingExpenses', async (req, res) => {
                 expenses.push("expense.push total: " + total);
 
                 // Check if total exceeds budget
-                if (total > budgets[i].budgetamount && category == result[0].categories[i].budgetname) {
+                if (total >= budgets[i].budgetamount && category == result[0].categories[i].budgetname) {
                     console.log(`total: ` + total + ` budgets[${i}].budgetamount: ` + budgets[i].budgetamount);
                     console.log(`Budget exceeded for category: ${findexpense}`);
                     overspent = true;
@@ -497,7 +497,7 @@ app.post('/calculations', async (req, res) => {
     var currentYear = 2024;
     var yearDifference = year - currentYear;
     var x = (1 + interest / 100);
-    var newPrice = pasreInt((price * (Math.pow(x, yearDifference))).toFixed(2));
+    var newPrice = parseInt((price * (Math.pow(x, yearDifference))).toFixed(2));
 
     console.log(typeof (newPrice));
     await investmentCollection.insertOne({ item: item, price: newPrice, year: year, loginID: loginID });
@@ -508,6 +508,13 @@ app.get('/deleteInvestment', async (req, res) => {
     var loginID = req.session.loginID;
     var item = req.query.item;
     await investmentCollection.deleteOne({loginID : loginID, item: item});
+    res.redirect("/expenses");
+})
+
+app.get('/deleteExpense', async (req, res) => {
+    var loginID = req.session.loginID;
+    var expense = req.query.expense;
+    await expenseCollection.deleteOne({loginID : loginID, expense : expense});
     res.redirect("/expenses");
 })
 
