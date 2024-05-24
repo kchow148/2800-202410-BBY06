@@ -528,7 +528,7 @@ app.get('/deleteInvestment', async (req, res) => {
     var loginID = req.session.loginID;
     var item = req.query.item;
     await investmentCollection.deleteOne({loginID : loginID, item: item});
-    res.redirect("expenses");
+    res.redirect("/expenses");
 })
 
 app.get('/location', (req, res) => {
