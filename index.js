@@ -228,7 +228,9 @@ app.get('/logout', (req, res) => {
 
 app.use('/setBudget', sessionValidation);
 app.get('/setBudget', (req, res) => {
-    res.render("setBudget", { error: false });
+    error = req.query.error
+    console.log(error);
+    res.render("setBudget", { error: error});
 })
 
 app.post('/settingBudget', async (req, res) => {
@@ -244,7 +246,7 @@ app.post('/settingBudget', async (req, res) => {
         for (i = 0; i < result[0].categories.length; i++) {
             if (result[0].categories[0].budgetname === budgetname) {
                 console.log("budget already made");
-                res.render("setBudget", { error: "budget already exists" });
+                res.redirect("/setBudget/?error=budget already exists");
                 return;
             }
         }
@@ -258,7 +260,7 @@ app.post('/settingBudget', async (req, res) => {
     if (validationResult.error != null) {
         console.log(validationResult.error.details[0].path[0]);
         var error = validationResult.error.details[0].message;
-        res.render('setBudgeterror', { error: error });
+        res.redirect(`/setBudget/?error=${error}`);
         return
     }
     const changed = await userCollection.updateOne(
