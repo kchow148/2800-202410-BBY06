@@ -493,7 +493,7 @@ app.post('/calculations', async (req, res) => {
     var currentYear = 2024;
     var yearDifference = year - currentYear;
     var x = (1 + interest / 100);
-    var newPrice = parseInt((price * (Math.pow(x, yearDifference))).toFixed(2));
+    var newPrice = parseFloat((price * (Math.pow(x, yearDifference))).toFixed(2));
 
     console.log(typeof (newPrice));
     await investmentCollection.insertOne({ item: item, price: newPrice, year: year, loginID: loginID });
