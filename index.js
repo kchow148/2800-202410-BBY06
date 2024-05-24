@@ -492,7 +492,7 @@ app.post('/calculations', async (req, res) => {
     var currentYear = 2024;
     var yearDifference = year - currentYear;
     var x = (1 + interest / 100);
-    var newPrice = pasreInt((price * (Math.pow(x, yearDifference))).toFixed(2));
+    var newPrice = parseInt((price * (Math.pow(x, yearDifference))).toFixed(2));
 
     console.log(typeof (newPrice));
     await investmentCollection.insertOne({ item: item, price: newPrice, year: year, loginID: loginID });
@@ -503,6 +503,13 @@ app.get('/deleteInvestment', async (req, res) => {
     var loginID = req.session.loginID;
     var item = req.query.item;
     await investmentCollection.deleteOne({loginID : loginID, item: item});
+    res.redirect("/expenses");
+})
+
+app.get('/deleteExpense', async (req, res) => {
+    var loginID = req.session.loginID;
+    var expense = req.query.expense;
+    await expenseCollection.deleteOne({loginID : loginID, expense : expense});
     res.redirect("/expenses");
 })
 

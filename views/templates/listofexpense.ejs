@@ -1,4 +1,7 @@
 <li class="list-group-item h5 mb-3 fw-normal">
    Expense Name : <%= expense.expense %>, Date : <%= expense.date %> <br>
    Price : <%= expense.price %>, category <%= expense.category %>
+   <a href = "/deleteExpense/?expense=<%= expense.expense %>">
+      <button class="btn btn-danger float-end">Delete Expense</button>
+   </a>  
 </li>
