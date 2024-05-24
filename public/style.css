@@ -83,3 +83,9 @@ body {
   line-height: inherit;
   padding: 0;
 }
+
+#plus {
+    background-color: inherit; /* Use the primary color from Bootstrap */
+    border-width: 0;
+    
+}
