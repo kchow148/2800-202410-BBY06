@@ -1,6 +1,13 @@
 <%- include("templates/header") %>
 <h1>Calculations</h1>
 <h5>The price of <%= item %> in <%= year %> with <%= interest %>% interest is <%= price %>.</h5>
+<h1>Current Savings</h1>
+<form action="/savings" method="post">
+    <div class="form-floating">
+        <input name='savings' type='text' class="form-control" id="floatingInput" placeholder='Savings'>
+        <label for="floatingInput">Savings</label>
+    </div>
+</form>
 <a href="/expenses">
     <button class="btn btn-primary w-100 py-2" type="submit">OK</button>
 </a>

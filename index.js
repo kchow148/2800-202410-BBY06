@@ -500,6 +500,23 @@ app.post('/calculations', async (req, res) => {
     res.render("calculations", { item: item, year: year, price: newPrice, interest: interest });
 })
 
+app.post('/savings', async (req, res) =>{
+    var loginID = req.session.loginID;
+    var price = parseInt(req.body.price);
+    var savings = parseInt(req.body.savings);
+    const schema = Joi.object({
+        savings: Joi.number().required()
+    });
+    const validationResult = schema.validate({savings});
+
+    if (validationResult.error != null){
+        console.log(validationResult.error);
+        res.redirect("/calculations");
+        return;
+    }
+})
+
+
 app.get('/deleteInvestment', async (req, res) => {
     var loginID = req.session.loginID;
     var item = req.query.item;
