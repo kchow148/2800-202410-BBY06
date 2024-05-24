@@ -229,11 +229,16 @@ app.get('/home', async (req, res) => {
             }
             else {
                 let m = 0;
-                for (m = 0; m < expense[0][findexpense].length; m++) {
-                    total += expense[0][findexpense][m].price;
+                record = expense[0][findexpense];
+                const currentDate = new Date();
+                for (m = 0; m < record.length; m++) {
+                    if (record[m].date.getMonth() === currentDate.getMonth())
+                    total += record[m].price;
+                    console.log(record[m].date.getMonth());
+                    console.log(currentDate.getMonth());
                 }
                 expenses.push(total);
-                // console.log("total is now: " + total);
+                
             }
             // console.log(expenses);
         }
@@ -331,7 +336,7 @@ app.post('/addingExpenses', async (req, res) => {
         return;
     } 
 
-    objexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price) };
+    objexpense = { expense: expenses, date: new Date(), price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
     console.log(objexpense);
@@ -340,7 +345,7 @@ app.post('/addingExpenses', async (req, res) => {
         { $push: catexpense },
         { upsert: true, new: true }
     );
-    addexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price), category: category };
+    addexpense = { expense: expenses, date: new Date(), price: Number(price), category: category };
     console.log(addexpense);
     expense = {};
     expense["expense"] = addexpense;
@@ -439,8 +444,12 @@ app.get('/budgets', async (req, res) => {
             }
             else {
                 let m = 0;
+                record = expense[0][findexpense];
+                const currentDate = new Date();
                 for (m = 0; m < expense[0][findexpense].length; m++) {
-                   cat.push(expense[0][findexpense][m]);
+                    if (record[m].date.getMonth() === currentDate.getMonth()){
+                        cat.push(expense[0][findexpense][m]);
+                    }
                 }
                 expenses.push(cat);
             }
