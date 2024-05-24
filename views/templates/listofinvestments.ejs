@@ -2,4 +2,7 @@
     Item: <%= investment.item %><br>
     Price : <%= investment.price %><br>
     Target Year: <%= investment.year %><br>
+    <a href = "/deleteInvestment/?item=<%= investment.item %>">
+        <button class="btn btn-danger float-end">Delete Investment</button>  
+    </a>
  </li>
