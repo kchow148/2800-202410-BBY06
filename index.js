@@ -507,6 +507,13 @@ app.get('/deleteInvestment', async (req, res) => {
     res.redirect("/expenses");
 })
 
+app.get('/deleteExpense', async (req, res) => {
+    var loginID = req.session.loginID;
+    var expense = req.query.expense;
+    await expenseCollection.deleteOne({loginID : loginID, expense : expense});
+    res.redirect("/expenses");
+})
+
 app.get('/location', (req, res) => {
     res.render("location", { html: '' });
 });
