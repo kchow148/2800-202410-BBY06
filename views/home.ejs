@@ -1,5 +1,5 @@
 <%- include("templates/header") %>
-<h1>Welcome to h<button onclick="eggie()">o</button>me page!</h1>
+<h1>Welcome to h<button id="egg" onclick="eggie()" class="text-warning">o</button>me page!</h1>
 <% if (exist) { %>
   <div class="d-flex flex-wrap"> <!-- Use flex-wrap to ensure items wrap into multiple rows -->
     <% for(let i = 0; i < budgets.length; i++) { %>
@@ -45,27 +45,23 @@
   </div>
 <% } %>
 <div id="money" class="content">
-  <!-- Repeated money elements -->
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
-  <div class="money">$</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
+  <div class="money dollar-bill">💵</div>
 </div>
 
 
