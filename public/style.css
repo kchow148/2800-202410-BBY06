@@ -7,7 +7,7 @@ body {
 
 .content{
     position: absolute;
-    top: 0;
+    top: -100px;
     left: 0;
     width: 100%;
     height: 100vh;
@@ -18,10 +18,9 @@ body {
 
 .money {
     position: absolute;
-    top: -50px;
     font-size: 100px;
     color: #2ecc71; /* Green color to represent money */
-    animation: fall linear infinite;
+    animation: fall linear;
     opacity: 0.9;
     
 }
@@ -52,26 +51,26 @@ body {
 }
 
 /* Generate multiple falling money with different animations */
-.money:nth-child(1) { left: 5%; animation-duration: 3s; animation-delay: 3s; }
-.money:nth-child(2) { left: 10%; animation-duration: 3s; animation-delay: 0.5s; }
-.money:nth-child(3) { left: 15%; animation-duration: 3s; animation-delay: 2s; }
-.money:nth-child(4) { left: 20%; animation-duration: 3s; animation-delay: 1.5s; }
-.money:nth-child(5) { left: 25%; animation-duration: 3s; animation-delay: 4s; }
-.money:nth-child(6) { left: 30%; animation-duration: 3s; animation-delay: 2.5s; }
-.money:nth-child(7) { left: 35%; animation-duration: 3s; animation-delay: 1s; }
-.money:nth-child(8) { left: 40%; animation-duration: 3s; animation-delay: 1.5s; }
-.money:nth-child(9) { left: 45%; animation-duration: 3s; animation-delay: 0s; }
-.money:nth-child(10) { left: 50%; animation-duration: 3s; animation-delay: 4.5s; }
-.money:nth-child(11) { left: 55%; animation-duration: 3s; animation-delay: 0.5s; }
-.money:nth-child(12) { left: 60%; animation-duration: 3s; animation-delay: 1s; }
-.money:nth-child(13) { left: 65%; animation-duration: 3s; animation-delay: 2.5s; }
-.money:nth-child(14) { left: 70%; animation-duration: 3s; animation-delay: 3s; }
-.money:nth-child(15) { left: 75%; animation-duration: 3s; animation-delay: 2.5s; }
-.money:nth-child(16) { left: 80%; animation-duration: 3s; animation-delay: 1s; }
-.money:nth-child(17) { left: 85%; animation-duration: 3s; animation-delay: 3.5s; }
+.money:nth-child(1) { left: 5%; animation-duration: 2s; animation-delay: 1s; }
+.money:nth-child(2) { left: 10%; animation-duration: 2s; animation-delay: 0.5s; }
+.money:nth-child(3) { left: 15%; animation-duration: 2s; animation-delay: 2s; }
+.money:nth-child(4) { left: 20%; animation-duration: 2s; animation-delay: 1.5s; }
+.money:nth-child(5) { left: 25%; animation-duration: 2s; animation-delay: 1s; }
+.money:nth-child(6) { left: 30%; animation-duration: 2s; animation-delay: 2.5s; }
+.money:nth-child(7) { left: 35%; animation-duration: 2s; animation-delay: 1s; }
+.money:nth-child(8) { left: 40%; animation-duration: 2s; animation-delay: 1.5s; }
+.money:nth-child(9) { left: 45%; animation-duration: 2s; animation-delay: 0s; }
+.money:nth-child(10) { left: 50%; animation-duration: 2s; animation-delay: 2.5s; }
+.money:nth-child(11) { left: 55%; animation-duration: 2s; animation-delay: 0.5s; }
+.money:nth-child(12) { left: 60%; animation-duration: 2s; animation-delay: 1s; }
+.money:nth-child(13) { left: 65%; animation-duration: 2s; animation-delay: 2.5s; }
+.money:nth-child(14) { left: 70%; animation-duration: 2s; animation-delay: 3s; }
+.money:nth-child(15) { left: 75%; animation-duration: 2s; animation-delay: 2.5s; }
+.money:nth-child(16) { left: 80%; animation-duration: 2s; animation-delay: 1s; }
+.money:nth-child(17) { left: 85%; animation-duration: 3s; animation-delay: 1.5s; }
 .money:nth-child(18) { left: 90%; animation-duration: 3s; animation-delay: 0s; }
 .money:nth-child(19) { left: 95%; animation-duration: 3s; animation-delay: 2.5s; }
-.money:nth-child(20) { left: 98%; animation-duration: 3s; animation-delay: 0s; }
+.money:nth-child(20) { left: 98%; animation-duration: 2s; animation-delay: 0s; }
 
 #egg {
     background-color: transparent;
