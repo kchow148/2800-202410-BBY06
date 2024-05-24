@@ -19,10 +19,25 @@ body {
 .money {
     position: absolute;
     top: -50px;
-    font-size: 2em;
+    font-size: 100px;
     color: #2ecc71; /* Green color to represent money */
     animation: fall linear infinite;
     opacity: 0.9;
+    
+}
+.dollar-bill {
+    width: 100px;
+    height: 50px;
+    background: linear-gradient(90deg, #c0d6a6 0%, #f0fff0 50%, #c0d6a6 100%);
+    border: 3px solid #a3c9a8;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10em;
+    color: #3a5d34;
+    font-weight: bold;
 }
 
 @keyframes fall {
@@ -32,28 +47,45 @@ body {
     }
     100% {
         transform: translateY(100vh) rotate(360deg);
-        opacity: 0;
+        opacity: 1;
     }
 }
 
 /* Generate multiple falling money with different animations */
-.money:nth-child(1) { left: 5%; animation-duration: 5s; animation-delay: 0s; }
-.money:nth-child(2) { left: 10%; animation-duration: 5s; animation-delay: 0.5s; }
-.money:nth-child(3) { left: 15%; animation-duration: 5s; animation-delay: 1s; }
-.money:nth-child(4) { left: 20%; animation-duration: 5s; animation-delay: 1.5s; }
-.money:nth-child(5) { left: 25%; animation-duration: 5s; animation-delay: 2s; }
-.money:nth-child(6) { left: 30%; animation-duration: 5s; animation-delay: 2.5s; }
-.money:nth-child(7) { left: 35%; animation-duration: 5s; animation-delay: 3s; }
-.money:nth-child(8) { left: 40%; animation-duration: 5s; animation-delay: 3.5s; }
-.money:nth-child(9) { left: 45%; animation-duration: 5s; animation-delay: 4s; }
-.money:nth-child(10) { left: 50%; animation-duration: 5s; animation-delay: 4.5s; }
-.money:nth-child(11) { left: 55%; animation-duration: 5s; animation-delay: 0.5s; }
-.money:nth-child(12) { left: 60%; animation-duration: 5s; animation-delay: 1s; }
-.money:nth-child(13) { left: 65%; animation-duration: 5s; animation-delay: 1.5s; }
-.money:nth-child(14) { left: 70%; animation-duration: 5s; animation-delay: 2s; }
-.money:nth-child(15) { left: 75%; animation-duration: 5s; animation-delay: 2.5s; }
-.money:nth-child(16) { left: 80%; animation-duration: 5s; animation-delay: 3s; }
-.money:nth-child(17) { left: 85%; animation-duration: 5s; animation-delay: 3.5s; }
-.money:nth-child(18) { left: 90%; animation-duration: 5s; animation-delay: 4s; }
-.money:nth-child(19) { left: 95%; animation-duration: 5s; animation-delay: 4.5s; }
-.money:nth-child(20) { left: 98%; animation-duration: 5s; animation-delay: 0s; }
+.money:nth-child(1) { left: 5%; animation-duration: 3s; animation-delay: 3s; }
+.money:nth-child(2) { left: 10%; animation-duration: 3s; animation-delay: 0.5s; }
+.money:nth-child(3) { left: 15%; animation-duration: 3s; animation-delay: 2s; }
+.money:nth-child(4) { left: 20%; animation-duration: 3s; animation-delay: 1.5s; }
+.money:nth-child(5) { left: 25%; animation-duration: 3s; animation-delay: 4s; }
+.money:nth-child(6) { left: 30%; animation-duration: 3s; animation-delay: 2.5s; }
+.money:nth-child(7) { left: 35%; animation-duration: 3s; animation-delay: 1s; }
+.money:nth-child(8) { left: 40%; animation-duration: 3s; animation-delay: 1.5s; }
+.money:nth-child(9) { left: 45%; animation-duration: 3s; animation-delay: 0s; }
+.money:nth-child(10) { left: 50%; animation-duration: 3s; animation-delay: 4.5s; }
+.money:nth-child(11) { left: 55%; animation-duration: 3s; animation-delay: 0.5s; }
+.money:nth-child(12) { left: 60%; animation-duration: 3s; animation-delay: 1s; }
+.money:nth-child(13) { left: 65%; animation-duration: 3s; animation-delay: 2.5s; }
+.money:nth-child(14) { left: 70%; animation-duration: 3s; animation-delay: 3s; }
+.money:nth-child(15) { left: 75%; animation-duration: 3s; animation-delay: 2.5s; }
+.money:nth-child(16) { left: 80%; animation-duration: 3s; animation-delay: 1s; }
+.money:nth-child(17) { left: 85%; animation-duration: 3s; animation-delay: 3.5s; }
+.money:nth-child(18) { left: 90%; animation-duration: 3s; animation-delay: 0s; }
+.money:nth-child(19) { left: 95%; animation-duration: 3s; animation-delay: 2.5s; }
+.money:nth-child(20) { left: 98%; animation-duration: 3s; animation-delay: 0s; }
+
+#egg {
+    background-color: transparent;
+  border-width: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-style: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+  padding: 0;
+}
+
+#plus {
+    background-color: inherit; /* Use the primary color from Bootstrap */
+    border-width: 0;
+    
+}
