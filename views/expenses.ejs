@@ -13,8 +13,12 @@
     <% if (exist) { %>
         <div class="list-group">
         <% let i = 0 %>
+        <% const currentDate = new Date(); %>
+        <% console.log(currentDate) %>
         <% for (i = 0; i < expense.length; i++) { %> 
-            <%- include('./templates/listofexpense', {expense: expense[i]})  %> 
+            <% if (expense[i].date.getMonth() === currentDate.getMonth()) { %>
+                <%- include('./templates/listofexpense', {expense: expense[i]})  %> 
+            <% } %> 
         <% } %>
     </div>
     <% } else { %>
