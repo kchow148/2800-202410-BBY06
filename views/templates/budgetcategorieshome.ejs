@@ -1,5 +1,5 @@
 <li class = "list-group-item">
-  <div class="card border-primary mb-3" style="max-width: 18rem;">
+  <div class="card border-primary mb-3" style="max-width: 100rem;">
       <div class="card-header"></div>
       <div class="card-body text-primary">
         <h5 class="card-title"><%= budgetname %></h5>
@@ -9,10 +9,10 @@
         <div class="progress">
           <% if(amount > 80) {%>
             <div class="progress-bar bg-danger" role="progressbar" style="width: <%= amount %>%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-            <div class="progress-bar" role="progressbar" style="width: <%= 100 - amount %>%; background-color: #00A300;" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar" role="progressbar" style="width: <%= 100 - amount %>%; background-color: #a9a9a9;" aria-valuemin="0" aria-valuemax="100"></div>
           <% } else {%>
             <div class="progress-bar" role="progressbar" style="width: <%= amount %>%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-            <div class="progress-bar" role="progressbar" style="width: <%= 100 - amount %>%; background-color: #00A300;" aria-valuemin="0" aria-valuemax="100"></div>
+            <div class="progress-bar" role="progressbar" style="width: <%= 100 - amount %>%; background-color: #a9a9a9;" aria-valuemin="0" aria-valuemax="100"></div>
             <%}%>
         </div>
       </div>

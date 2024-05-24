@@ -16,9 +16,33 @@
       <div class="form-check text-start my-3">
       </div>
       <button class="btn btn-primary w-100 py-2" type="submit">Create</button>
+      <p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
     </form>
-    <% if (error) { %>
-      <%= error %>
-        <% } %>
+          <!-- Modal -->
+          <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="errorModalLabel">Error</h5>
+                    </div>
+                    <div class="modal-body">
+                        <%= error %>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" onclick="window.location.href='/setBudget'">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
   </main>
+  <% if (error) { %>
+    <script>
+        // Wait for the document to be ready
+        document.addEventListener("DOMContentLoaded", function() {
+            // When the document is ready, show the modal
+            var myModal = new bootstrap.Modal(document.getElementById('errorModal'));
+            myModal.show();
+        });
+    </script>
+<% } %>
   <%- include("templates/footer") %>

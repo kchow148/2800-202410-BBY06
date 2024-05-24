@@ -64,7 +64,7 @@ function sessionValidation(req, res, next) {
 
 app.get('/', (req, res) => {
     console.log(isValidSession(req) == true);
-    console.log(true); 
+    console.log(true);
     if (req.session.authenticated) {
         res.render("index");
     } else {
@@ -89,7 +89,7 @@ app.post('/submitUser', async (req, res) => {
     if (existingUser) {
         var html = "LoginID already taken. Please choose a different one.";
         return res.render("createUser", { html: html });
-    } 
+    }
 
     const schema = Joi.object({
         loginID: Joi.string().alphanum().max(20).required(),
@@ -106,7 +106,7 @@ app.post('/submitUser', async (req, res) => {
 
     var hashedPassword = await bcrypt.hash(password, saltRounds);
 
-    await userCollection.insertOne({ username: username, loginID: loginID, email: email, password: hashedPassword});
+    await userCollection.insertOne({ username: username, loginID: loginID, email: email, password: hashedPassword });
     console.log("Inserted user");
 
     // Set session variables for the new user
@@ -126,32 +126,6 @@ app.get('/login', (req, res) => {
 app.get("/passwordReset", (req, res) => {
     res.render("passwordReset");
 });
-
-// app.post("/confirmLoginID", async (req, res) => {
-//     var loginID = req.body.loginID;
-
-//     const schema = Joi.string().max(20).required();
-//     const validationResult = schema.validate(loginID);
-//     if (validationResult.error != null) {
-//         console.log(validationResult.error);
-//         res.redirect("/passwordReset");
-//         return;
-//     }
-
-//     const result = await userCollection.find({ loginID: loginID }).project({ loginID: 1, password: 1, _id: 1 }).toArray();
-
-//     if (result.length != 1) {
-//         console.log("user not found");
-//         res.redirect("/passwordReset");
-//         return;
-//     }
-
-//     res.redirect("/passwordChange");
-// });
-
-// app.get("/passwordChange", (req, res) => {
-//     res.render("passwordChange");
-// });
 
 app.post("/changingPassword", async (req, res) => {
     var username = req.body.username;
@@ -220,7 +194,7 @@ app.get('/home', async (req, res) => {
             let total = 0;
             find[findexpense] = 1;
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
-            if (expense[0]=== undefined) {
+            if (expense[0] === undefined) {
                 expenses.push(total);
                 // console.log("total is now: " + total);
             }
@@ -229,15 +203,20 @@ app.get('/home', async (req, res) => {
             }
             else {
                 let m = 0;
-                for (m = 0; m < expense[0][findexpense].length; m++) {
-                    total += expense[0][findexpense][m].price;
+                record = expense[0][findexpense];
+                const currentDate = new Date();
+                for (m = 0; m < record.length; m++) {
+                    if (record[m].date.getMonth() === currentDate.getMonth())
+                        total += record[m].price;
+                    console.log(record[m].date.getMonth());
+                    console.log(currentDate.getMonth());
                 }
                 expenses.push(total);
-                // console.log("total is now: " + total);
+
             }
             // console.log(expenses);
         }
-        res.render("home", { exist: true, budgets: budgets,expenses: expenses });
+        res.render("home", { exist: true, budgets: budgets, expenses: expenses });
     }
 });
 
@@ -249,7 +228,9 @@ app.get('/logout', (req, res) => {
 
 app.use('/setBudget', sessionValidation);
 app.get('/setBudget', (req, res) => {
-    res.render("setBudget",{error: false});
+    error = req.query.error
+    console.log(error);
+    res.render("setBudget", { error: error});
 })
 
 app.post('/settingBudget', async (req, res) => {
@@ -262,10 +243,10 @@ app.post('/settingBudget', async (req, res) => {
 
     } else {
         let i = 0;
-        for (i = 0; i < result[0].categories.length; i++){
-            if (result[0].categories[0].budgetname === budgetname){
+        for (i = 0; i < result[0].categories.length; i++) {
+            if (result[0].categories[0].budgetname === budgetname) {
                 console.log("budget already made");
-                res.render("setBudget",{error: "budget already exists"});
+                res.redirect("/setBudget/?error=budget already exists");
                 return;
             }
         }
@@ -279,7 +260,7 @@ app.post('/settingBudget', async (req, res) => {
     if (validationResult.error != null) {
         console.log(validationResult.error.details[0].path[0]);
         var error = validationResult.error.details[0].message;
-        res.render('setBudgeterror', { error: error });
+        res.redirect(`/setBudget/?error=${error}`);
         return
     }
     const changed = await userCollection.updateOne(
@@ -304,7 +285,7 @@ app.get('/addExpenses', async (req, res) => {
     }
     else {
         category = result[0].categories;
-        res.render("addExpenses", { exist: true, category: category, error: url});
+        res.render("addExpenses", { exist: true, category: category, error: url });
     }
 });
 
@@ -316,9 +297,9 @@ app.post('/addingExpenses', async (req, res) => {
     console.log(category);
     price = req.body.price;
     loginID = req.session.loginID;
-    const schema = Joi.object (
+    const schema = Joi.object(
         {
-            
+
             expenses: Joi.string().required(),
             price: Joi.number().required()
         });
@@ -329,9 +310,9 @@ app.post('/addingExpenses', async (req, res) => {
         console.log(validationResult);
         res.redirect(`/addExpenses/?error=${error}`);
         return;
-    } 
+    }
 
-    objexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price) };
+    objexpense = { expense: expenses, date: new Date(), price: Number(price) };
     catexpense = {};
     catexpense[category] = objexpense;
     console.log(objexpense);
@@ -340,7 +321,7 @@ app.post('/addingExpenses', async (req, res) => {
         { $push: catexpense },
         { upsert: true, new: true }
     );
-    addexpense = { expense: expenses, date: new Date().toISOString(), price: Number(price), category: category };
+    addexpense = { expense: expenses, date: new Date(), price: Number(price), category: category };
     console.log(addexpense);
     expense = {};
     expense["expense"] = addexpense;
@@ -399,11 +380,11 @@ app.use('/profilePage', sessionValidation);
 app.get('/profilePage', async (req, res) => {
     loginID = req.session.loginID;
     // const result = userCollection.find({loginID : loginID}).project({username:1, loginID: 1, email: 1}).toArray();
-    const result = await userCollection.find({ loginID: loginID }).project({ username: 1, loginID: 1, email:1 }).toArray();
+    const result = await userCollection.find({ loginID: loginID }).project({ username: 1, loginID: 1, email: 1 }).toArray();
     console.log(result);
     username = result[0].username
     email = result[0].email
-    res.render("profilePage", { username: username, loginID: loginID, email:email });
+    res.render("profilePage", { username: username, loginID: loginID, email: email });
 });
 
 //if the user goes over budget, direct to here:
@@ -415,9 +396,9 @@ app.use('/budgets', sessionValidation);
 app.get('/budgets', async (req, res) => {
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
-    console.log(result);
+    //console.log(result);
     if (result[0].categories === undefined) {
-        res.render("budgets",{exist:false});
+        res.render("budgets", { exist: false });
     }
     else {
         budgets = result[0].categories
@@ -427,7 +408,7 @@ app.get('/budgets', async (req, res) => {
             var findexpense = budgets[i].budgetname;
             var find = {};
             let total = 0;
-            let cat =[]
+            let cat = []
             find[findexpense] = 1;
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
             if (expense[0] === undefined) {
@@ -438,14 +419,17 @@ app.get('/budgets', async (req, res) => {
             }
             else {
                 let m = 0;
+                record = expense[0][findexpense];
+                const currentDate = new Date();
                 for (m = 0; m < expense[0][findexpense].length; m++) {
-                   cat.push(expense[0][findexpense][m]);
+                    if (record[m].date.getMonth() === currentDate.getMonth()) {
+                        cat.push(expense[0][findexpense][m]);
+                    }
                 }
                 expenses.push(cat);
             }
-            console.log(expenses);
         }
-        res.render("budgets", { budgets: budgets,expenses:expenses,exist:true});
+        res.render("budgets", { budgets: budgets, expenses: expenses, exist: true });
     }
 });
 
@@ -453,16 +437,16 @@ app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
-    const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, _id: 1}).toArray();
+    const result2 = await investmentCollection.find({ loginID: loginID }).project({ item: 1, price: 1, year: 1, interest: 1, _id: 1 }).toArray();
     if (result.length === 0 || result[0].expense === undefined) {
-        res.render("expenses", { exist: false, exist2: true, investments: result2})
+        res.render("expenses", { exist: false, exist2: true, investments: result2 })
     }
-    else if(result2.length === 0){
+    else if (result2.length === 0) {
         expense = result[0].expense;
-        res.render("expenses", {exist: true, exist2: false, expense: expense, investments: result2})
+        res.render("expenses", { exist: true, exist2: false, expense: expense, investments: result2 })
     }
-    else if(result.length === 0 && result2.length === 0){
-        res.render("expenses", {exist: false, exist2: false, investments: result2})
+    else if (result.length === 0 && result2.length === 0) {
+        res.render("expenses", { exist: false, exist2: false, investments: result2 })
     }
     else {
         expense = result[0].expense;
@@ -470,9 +454,9 @@ app.get('/expenses', async (req, res) => {
     };
 });
 
-function calculateTotal(result){
+function calculateTotal(result) {
     let total = 0;
-    for(i = 0; i < result[0].expense.length; i++){
+    for (i = 0; i < result[0].expense.length; i++) {
         //console.log("prices: " + result[0].expense[0].price);
         total += parseFloat(result[0].expense[i].price);
     }
@@ -484,32 +468,42 @@ app.get('/investments', async (req, res) => {
     res.render("investments");
 })
 
-app.post('/addingInvestments', async (req, res) => {
+app.post('/calculations', async (req, res) => {
     var item = req.body.item;
-    var price = req.body.price;
-    var year = req.body.year;
+    var price = parseInt(req.body.price);
+    var year = parseInt(req.body.year);
+    var interest = parseInt(req.body.interest);
     var loginID = req.session.loginID;
     const schema = Joi.object({
         item: Joi.string().max(20).required(),
-        price: Joi.string().max(20).required(),
-        year: Joi.number().max(9999).required()
+        price: Joi.number().max(999999999999).required(),
+        year: Joi.number().max(9999).required(),
+        interest: Joi.number().max(100).required()
     });
 
-    const validationResult = schema.validate({item, price, year});
-        
+    const validationResult = schema.validate({ item, price, year, interest });
+
     if (validationResult.error != null) {
         console.log(validationResult.error);
         res.redirect("/investments");
         return;
     }
 
-    await investmentCollection.insertOne({ item: item, price: price, year: year, loginID: loginID });
-    res.redirect("/expenses");
-});
+    var currentYear = 2024;
+    var yearDifference = year - currentYear;
+    var x = (1 + interest / 100);
+    var newPrice = pasreInt((price * (Math.pow(x, yearDifference))).toFixed(2));
 
-app.use('/calculations', sessionValidation);
-app.get('/calculations', async (req, res) => {
-    res.render("calculations");
+    console.log(typeof (newPrice));
+    await investmentCollection.insertOne({ item: item, price: newPrice, year: year, loginID: loginID });
+    res.render("calculations", { item: item, year: year, price: newPrice, interest: interest });
+})
+
+app.get('/deleteInvestment', async (req, res) => {
+    var loginID = req.session.loginID;
+    var item = req.query.item;
+    await investmentCollection.deleteOne({loginID : loginID, item: item});
+    res.redirect("/expenses");
 })
 
 app.get('/location', (req, res) => {
@@ -524,19 +518,19 @@ app.get('/summary', async (req, res) => {
         const options = {
             url: 'https://api.api-ninjas.com/v1/inflation?country=' + country,
             headers: {
-                'X-Api-Key': api_key 
+                'X-Api-Key': api_key
             }
         };
 
         const inflationResponse = await requestPromise(options);
         const inflationDataArray = JSON.parse(inflationResponse);
-        const inflationData = inflationDataArray[0]; 
+        const inflationData = inflationDataArray[0];
 
         const newsApiKey = api_key_2;
         const newsResponse = await axios.get('https://newsapi.org/v2/everything', {
             params: {
                 q: `inflation ${country}`,
-                language: 'en', 
+                language: 'en',
                 apiKey: newsApiKey,
                 excludeSources: 'reuters'
             }
@@ -557,11 +551,31 @@ app.get('/summary', async (req, res) => {
 
 
 
-        res.render('summary', { inflationData, newsArticles});
+        res.render('summary', { inflationData, newsArticles });
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('An error occurred while fetching data');
     }
+});
+
+app.get('/deletebudget', async (req, res) => {
+    loginID = req.session.loginID;
+    budgetname = req.query.budget;
+    const deletebudget = await userCollection.updateOne(
+        { loginID: loginID },
+        {
+            $pull: {
+                categories: {
+                    budgetname: budgetname
+                }
+            }
+        }
+    )
+    var expense = budgetname
+    const deleteexpense = await expenseCollection.updateOne(
+        {loginID:loginID, [expense]:  {$exists:true}}, {$unset: {[expense]: ''}}
+    )
+    res.redirect('/budgets')
 });
 
 app.get('*', (req, res) => {
@@ -569,6 +583,6 @@ app.get('*', (req, res) => {
     res.render("404");
 })
 
-app.listen(port, ()=> {
+app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
