@@ -1,4 +1,7 @@
 <%- include("templates/header") %>
 <h1>Calculations</h1>
-<h5>The price of <%= item %> in <%= year %> is <%= price %></h5>
+<h5>The price of <%= item %> in <%= year %> with <%= interest %>% interest is <%= price %>.</h5>
+<a href="/expenses">
+    <button class="btn btn-primary w-100 py-2" type="submit">OK</button>
+</a>
 <%- include("templates/footer") %>

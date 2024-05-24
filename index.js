@@ -424,7 +424,7 @@ app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
-    const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, _id: 1}).toArray();
+    const result2 = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, interest: 1, _id: 1}).toArray();
     if (result.length === 0 || result[0].expense === undefined) {
         res.render("expenses", { exist: false, exist2: true, investments: result2})
     }
@@ -455,21 +455,20 @@ app.get('/investments', async (req, res) => {
     res.render("investments");
 })
 
-app.use('/calculations', sessionValidation);
-
 app.post('/calculations', async (req, res) => {
     var item = req.body.item;
-    var price = req.body.price;
-    var year = req.body.year;
-    var interest = req.body.interest;
+    var price = parseInt(req.body.price);
+    var year = parseInt(req.body.year);
+    var interest = parseInt(req.body.interest);
     var loginID = req.session.loginID;
     const schema = Joi.object({
         item: Joi.string().max(20).required(),
-        price: Joi.string().max(20).required(),
-        year: Joi.number().max(9999).required()
+        price: Joi.number().max(999999999999).required(),
+        year: Joi.number().max(9999).required(),
+        interest: Joi.number().max(100).required()
     });
 
-    const validationResult = schema.validate({item, price, year, interest, loginID});
+    const validationResult = schema.validate({item, price, year, interest});
         
     if (validationResult.error != null) {
         console.log(validationResult.error);
@@ -477,8 +476,14 @@ app.post('/calculations', async (req, res) => {
         return;
     }
 
-    await investmentCollection.find().project({item: 1, price: 1, year: 1, interest: 1, loginID: 1}).toArray();
-    res.render("calculations", {item: item, year : year, price : price});
+    var currentYear = 2024;
+    var yearDifference = year - currentYear;
+    var x = (1 + interest/100);
+    var newPrice = pasreInt((price * (Math.pow(x, yearDifference))).toFixed(2));
+
+    console.log(typeof(newPrice));
+    await investmentCollection.insertOne({item: item, price: newPrice, year: year, loginID: loginID});
+    res.render("calculations", {item: item, year : year, price : newPrice, interest: interest});
 })
 
 app.get('/location', (req, res) => {
