@@ -1,5 +1,12 @@
 <%- include("templates/header") %>
 <a href="/setBudget"><button class="btn btn-primary py-2">Set New budget</button></a>
+<% const currentDate = new Date(); %>
+<% if (currentDate.getMonth() + 1 != currentMonth) { %>
+    <a href = "/Budgets/?month=<%= currentMonth - 1 %>"><button type = "button" class = "btn btn-success">Prev</button></a>
+<% } %>
+<% if (currentDate.getMonth() != currentMonth) { %>
+    <a href = "/Budgets/?month=<%= currentMonth + 1 %>"><button type = "button" class = "btn btn-success">Next</button></a>
+<% } %>
 <% if (exist) { %> 
     <div class="list-group">
         <ul class="list-group">

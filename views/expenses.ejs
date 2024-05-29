@@ -7,13 +7,19 @@
         <button type = "button" class = "btn btn-success w-100 py-2">Add Expense</button>
     </a></br></br>
     <h1>List of Expenses:</h1>
+    <% const currentDate = new Date(); %>
+    <% if (currentDate.getMonth() + 1 != currentMonth) { %>
+        <a href = "/expenses/?month=<%= currentMonth - 1 %>"><button type = "button" class = "btn btn-success">Prev</button></a>
+    <% } %>
+    <% if (currentDate.getMonth() != currentMonth) { %>
+        <a href = "/expenses/?month=<%= currentMonth + 1 %>"><button type = "button" class = "btn btn-success">Next</button></a>
+    <% } %>
     <% if (exist) { %>
         <div class="list-group">
         <% let i = 0 %>
         <% const currentDate = new Date(); %>
-        <% console.log(currentDate) %>
         <% for (i = 0; i < expense.length; i++) { %> 
-            <% if (expense[i].date.getMonth() === currentDate.getMonth()) { %>
+            <% if (expense[i].date.getMonth() === currentMonth) { %>
                 <%- include('./templates/listofexpense', {expense: expense[i]})  %> 
             <% } %> 
         <% } %>

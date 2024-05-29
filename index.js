@@ -398,6 +398,17 @@ app.get('/budgetExceeded', async (req, res) => {
 
 app.use('/budgets', sessionValidation);
 app.get('/budgets', async (req, res) => {
+    month = req.query.month
+    const currentDate = new Date();
+    if (month === undefined) {
+        currentMonth = currentDate.getMonth();
+    } else {
+        if (parseInt(month) === -1) {
+            currentMonth = 11;
+        } else {
+            currentMonth = parseInt(month) % 12
+        }
+    } 
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     //console.log(result);
@@ -411,7 +422,6 @@ app.get('/budgets', async (req, res) => {
         for (i = 0; i < budgets.length; i++) {
             var findexpense = budgets[i].budgetname;
             var find = {};
-            let total = 0;
             let cat = []
             find[findexpense] = 1;
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
@@ -424,9 +434,8 @@ app.get('/budgets', async (req, res) => {
             else {
                 let m = 0;
                 record = expense[0][findexpense];
-                const currentDate = new Date();
                 for (m = 0; m < expense[0][findexpense].length; m++) {
-                    if (record[m].date.getMonth() === currentDate.getMonth()) {
+                    if (record[m].date.getMonth() === currentMonth) {
                         cat.push(expense[0][findexpense][m]);
                     }
                 }
@@ -439,23 +448,27 @@ app.get('/budgets', async (req, res) => {
 
 app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
+    month = req.query.month ;
+    currentDate = new Date();
     overspent = req.query.overspent;
     loginID = req.session.loginID;
     const result = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
-    const result2 = await investmentCollection.find({ loginID: loginID }).project({ item: 1, price: 1, year: 1, interest: 1, _id: 1 }).toArray();
+    if (month === undefined) {
+        currentMonth = currentDate.getMonth();
+    } else {
+        if (parseInt(month) === -1) {
+            currentMonth = 11;
+        } else {
+            currentMonth = parseInt(month) % 12
+        }
+    } 
+    console.log(currentMonth)
     if (result.length === 0 || result[0].expense === undefined) {
-        res.render("expenses", { exist: false, exist2: true, investments: result2, overspent: overspent})
-    }
-    else if (result2.length === 0) {
-        expense = result[0].expense;
-        res.render("expenses", { exist: true, exist2: false, expense: expense, investments: result2 })
-    }
-    else if (result.length === 0 && result2.length === 0) {
-        res.render("expenses", { exist: false, exist2: false, investments: result2 })
+        res.render("expenses", { exist: false, overspent: overspent, currenMonth: currentMonth})
     }
     else {
         expense = result[0].expense;
-        res.render("expenses", { expense: expense, investments: result2, exist: true })
+        res.render("expenses", { expense: expense, exist: true,currenMonth: currentMonth})
     };
 });
 
