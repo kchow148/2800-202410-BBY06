@@ -2,14 +2,11 @@
 
 <%- include("templates/warningModal") %>
 
-    <h1>Type of Purchase</h1>
+    <h1>Expenses</h1>
     <a href="/addExpenses">
-        <button type = "button" class = "btn btn-success w-100 py-2">Short Term Purchases</button>
+        <button type = "button" class = "btn btn-success w-100 py-2">Add Expense</button>
     </a></br></br>
-    <a href="/investments">
-        <button type = "button" class = "btn btn-success w-100 py-2">Long Term Investments</button>
-    </a>
-    <h1>Expenses:</h1>
+    <h1>List of Expenses:</h1>
     <% if (exist) { %>
         <div class="list-group">
         <% let i = 0 %>
@@ -23,18 +20,6 @@
     </div>
     <% } else { %>
         No expenses recorded <br>
-    <% } %>
-
-    <h1>Investments:</h1>
-    <% if(investments.length > 0) { %>
-        <div class="list-group">
-        <% for (let i = 0; i < investments.length; i++) { %>
-            <%- include('templates/listofinvestments', {investment: investments[i]}) %>
-        <% } %>
-    </div> 
-
-    <% } else { %>
-        No investments recorded
     <% } %>
 
 

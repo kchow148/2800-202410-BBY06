@@ -1,0 +1,17 @@
+<%- include("templates/header") %>
+<h1>Investments</h1>
+<a href="/investments">
+    <button type = "button" class = "btn btn-success w-100 py-2">Add Investment</button>
+</a>
+<h1>List of Investments:</h1>
+<% if(investments.length > 0) { %>
+    <div class="list-group">
+    <% for (let i = 0; i < investments.length; i++) { %>
+        <%- include('templates/listofinvestments', {investment: investments[i]}) %>
+    <% } %>
+</div> 
+
+<% } else { %>
+    No investments recorded
+<% } %>
+<%- include("templates/footer") %>

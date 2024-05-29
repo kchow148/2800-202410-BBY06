@@ -459,6 +459,13 @@ app.get('/expenses', async (req, res) => {
     };
 });
 
+app.use('/savings', sessionValidation);
+app.get('/savings', async (req, res) => {
+    loginID = req.session.loginID;
+    const result = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, interest: 1, _id:1}).toArray();
+    res.render("savings", {investments: result})
+})
+
 function calculateTotal(result) {
     let total = 0;
     for (i = 0; i < result[0].expense.length; i++) {
@@ -508,7 +515,7 @@ app.get('/deleteInvestment', async (req, res) => {
     var loginID = req.session.loginID;
     var item = req.query.item;
     await investmentCollection.deleteOne({loginID : loginID, item: item});
-    res.redirect("/expenses");
+    res.redirect("/savings");
 })
 
 app.get('/deleteExpense', async (req, res) => {
