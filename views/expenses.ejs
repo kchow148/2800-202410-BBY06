@@ -1,13 +1,18 @@
 <%- include("templates/header") %>
 
 <%- include("templates/warningModal") %>
-
+<% var months = ["January","Febuary","March","April","May","June","July","August","September","October","November","December"] %>
     <h1>Expenses</h1>
     <a href="/addExpenses">
         <button type = "button" class = "btn btn-success w-100 py-2">Add Expense</button>
     </a></br></br>
-    <h1>List of Expenses:</h1>
     <% const currentDate = new Date(); %>
+    <% const Year = currentDate.getFullYear(); %>
+    <% if (currentDate.getMonth() < currentMonth) { %>
+        <h1>List of Expenses: <%= Year -1 %> <%= months[currentMonth] %></h1>
+    <% } else { %>
+        <h1>List of Expenses: <%= Year %> <%= months[currentMonth] %></h1>
+    <% } %>
     <% if (currentDate.getMonth() + 1 != currentMonth) { %>
         <a href = "/expenses/?month=<%= currentMonth - 1 %>"><button type = "button" class = "btn btn-success">Prev</button></a>
     <% } %>
