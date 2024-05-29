@@ -1,30 +1,39 @@
 <%- include("templates/header") %>
-<a href="/setBudget"><button class="btn btn-primary py-2">Set New budget</button></a>
-<% var months = ["January","Febuary","March","April","May","June","July","August","September","October","November","December"] %>
-    <h1>Budgets</h1>
-    <% const currentDate = new Date(); %>
-    <% const Year = currentDate.getFullYear(); %>
-    <% if (currentDate.getMonth() < currentMonth) { %>
-        <h1><%= Year -1 %> <%= months[currentMonth] %></h1>
-    <% } else { %>
-        <h1><%= Year %> <%= months[currentMonth] %></h1>
-    <% } %>
-<% if (currentDate.getMonth() + 1 != currentMonth) { %>
-    <a href = "/Budgets/?month=<%= currentMonth - 1 %>"><button type = "button" class = "btn btn-success">Prev</button></a>
-<% } %>
-<% if (currentDate.getMonth() != currentMonth) { %>
-    <a href = "/Budgets/?month=<%= currentMonth + 1 %>"><button type = "button" class = "btn btn-success">Next</button></a>
-<% } %>
-<% if (exist) { %> 
-    <div class="list-group">
-        <ul class="list-group">
-            <% let i=0; %>
-            <% for(i=0; i < budgets.length; i++) { %>
-            <%- include('templates/budgetcategories', {budgetname: budgets[i].budgetname,budgetamount:budgets[i].budgetamount,expenses:expenses[i]})  %> 
-            <% } %>
-        </ul>
-    </div>
-<% } else { %>
-    <h1>No budgets made</h1>
-    <% } %> 
-<%- include("templates/footer") %>
+    <% var
+        months=["January","Febuary","March","April","May","June","July","August","September","October","November","December"]
+        %>
+        <% const currentDate=new Date(); %>
+            <% const Year=currentDate.getFullYear(); %>
+                <% if (currentDate.getMonth() < currentMonth) { %>
+                    <h1>Budgets :<%= Year -1 %>
+                            <%= months[currentMonth] %>
+                    </h1>
+                    <% } else { %>
+                        <h1>Budgets: <%= Year %>
+                                <%= months[currentMonth] %>
+                        </h1>
+                        <% } %>
+                            <div class="btn-group py-2">
+                                <a href="/setBudget"><button class="btn btn-primary btn">Set New budget</button></a>
+                                <% if (currentDate.getMonth() + 1 !=currentMonth) { %>
+                                    <a href="/Budgets/?month=<%= currentMonth - 1 %>"><button
+                                            class="btn btn-success">Prev</button></a>
+                                    <% } %>
+                            <% if (currentDate.getMonth() !=currentMonth) { %>
+                                <a href="/Budgets/?month=<%= currentMonth + 1 %>"><button
+                                        class="btn btn-success">Next</button></a>
+                                <% } %>
+                            </div>
+                                    <% if (exist) { %>
+                                        <div class="list-group">
+                                            <% let i=0; %>
+                                                <% for(i=0; i < budgets.length; i++) { %>
+                                                    <%- include('templates/budgetcategories', {budgetname:
+                                                        budgets[i].budgetname,budgetamount:budgets[i].budgetamount,expenses:expenses[i]})
+                                                        %>
+                                                        <% } %>
+                                        </div>
+                                        <% } else { %>
+                                            <h1>No budgets made</h1>
+                                            <% } %>
+                                                <%- include("templates/footer") %>

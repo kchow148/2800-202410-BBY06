@@ -1,18 +1,22 @@
-<li class = "list-group-item">
-        <li class="list-group-item h5 mb-3 fw-normal">
-          <h5 class="title"><%= budgetname %>: <%= budgetamount %> <a href="/deletebudget/?budget=<%=budgetname%>"<button class="btn btn-danger float-end">Delete Budget</button></a></h5>
-       </li>
-      <% if (expenses.length > 0) { %>
-        <% let i = 0 %>
-        <% for (i = 0; i < expenses.length; i++) { %> 
-      <li class="list-group-item h5 mb-3 fw-normal">
-        Expense Name : <%= expenses[i].expense %>, Date : <%= expenses[i].date %> <br>
-        Price : <%= expenses[i].price %>
-     </li>
-    <% } %>
-   <% } else { %>
-    <li class="list-group-item h5 mb-3 fw-normal">
-    no transaction recorded
+<ul class="list-group">
+  <li class="list-group-item border border-dark">
+    <h5 class="title">
+      <%= budgetname %>: <%= budgetamount %> <a href="/deletebudget/?budget=<%=budgetname%>" <button
+            class="btn btn-danger float-end">Delete Budget</button></a>
+    </h5>
   </li>
-  <% } %>
-</li>
+  <% if (expenses.length> 0) { %>
+    <% let i=0 %>
+      <% for (i=0; i < expenses.length; i++) { %>
+        <li class="list-group-item fw-normal border border-dark">
+          Expense Name : <%= expenses[i].expense %>, Date : <%= expenses[i].date %> <br>
+              Price : <%= expenses[i].price %>
+        </li>
+        <% } %>
+          <% } else { %>
+            <li class="list-group-item fw-normal border border-dark">
+              no transaction recorded
+            </li>
+            <% } %>
+</ul>
+<br>
