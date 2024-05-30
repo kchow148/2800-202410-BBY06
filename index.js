@@ -62,9 +62,54 @@ function sessionValidation(req, res, next) {
     }
 }
 
+async function updateatedata(loginID) {
+    try {
+        // Fetch expenses related to the loginID
+        const expensesResult = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
+        if (expensesResult.length === 0 || expensesResult[0].expense === undefined) {
+            console.log("Expense empty");
+            return 'No expenses found';
+        }
+
+        // Fetch budget categories related to the loginID
+        const budgetResult = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
+        if (budgetResult.length === 0 || budgetResult[0].categories === undefined) {
+            console.log("No categories found");
+            return 'No categories found';
+        }
+
+        const budgets = budgetResult[0].categories;
+        const now = new Date();
+        const dateChange = new Date(now.setMonth(now.getMonth() - 11));
+        console.log(`Date change: ${dateChange}`);
+
+        for (let i = 0; i < budgets.length; i++) {
+            const budgetCategory = budgets[i].budgetname;
+            console.log(budgetCategory);
+            // Update documents that have the budget category and remove old entries
+            const updateResult = await expenseCollection.updateMany(
+                { [`${budgetCategory}`]: { $exists: true } },
+                { $pull: { [`${budgetCategory}`]: { date: { $lt: dateChange } } } }
+            );
+            console.log(`Updated ${updateResult.modifiedCount} documents for category ${budgetCategory}`);
+        }
+
+        // Additional update for the "expense" field, if necessary
+        const expenseUpdateResult = await expenseCollection.updateMany(
+            { expense: { $exists: true } },
+            { $pull: { expense: { date: { $lt: dateChange } } } }
+        );
+        console.log(`Updated ${expenseUpdateResult.modifiedCount} documents for general expenses`);
+
+        return 'Data updated successfully';
+    } catch (error) {
+        console.error('Error updating data:', error);
+        throw new Error('Internal server error');
+    }
+}
+
+
 app.get('/', (req, res) => {
-    console.log(isValidSession(req) == true);
-    console.log(true);
     if (req.session.authenticated) {
         res.render("index");
     } else {
@@ -180,6 +225,7 @@ app.get('/home', async (req, res) => {
         res.redirect('/login');
     }
     loginID = req.session.loginID;
+    const changedata = await updateatedata(loginID);
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
     if (result[0].categories === undefined) {
         res.render("home", { exist: false });
@@ -196,7 +242,6 @@ app.get('/home', async (req, res) => {
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
             if (expense[0] === undefined) {
                 expenses.push(total);
-                console.log("[/home] total is now: " + total);
             }
             else if (expense[0][findexpense] === undefined) {
                 expenses.push(total);
@@ -208,8 +253,6 @@ app.get('/home', async (req, res) => {
                 for (m = 0; m < record.length; m++) {
                     if (record[m].date.getMonth() === currentDate.getMonth())
                         total += record[m].price;
-                    console.log(record[m].date.getMonth());
-                    console.log(currentDate.getMonth());
                 }
                 expenses.push(total);
 
@@ -229,7 +272,7 @@ app.use('/setBudget', sessionValidation);
 app.get('/setBudget', (req, res) => {
     error = req.query.error
     console.log(error);
-    res.render("setBudget", { error: error});
+    res.render("setBudget", { error: error });
 })
 
 app.post('/settingBudget', async (req, res) => {
@@ -338,7 +381,7 @@ app.post('/addingExpenses', async (req, res) => {
         res.render("expenses", { exist: false });
     }
     else {
-        
+
         budgets = result[0].categories
         let i = 0;
         let expenses = [];
@@ -370,12 +413,12 @@ app.post('/addingExpenses', async (req, res) => {
         }
     }
     //------------------------
-    if(overspent){
+    if (overspent) {
         // This part needs to be changed to activate the modal
         // res.redirect('/budgetExceeded');
         res.redirect(`/expenses/?overspent=${overspent}`);
     }
-    else{
+    else {
         res.redirect('/addExpenses');
     }
 });
@@ -408,7 +451,7 @@ app.get('/budgets', async (req, res) => {
         } else {
             currentMonth = parseInt(month) % 12
         }
-    } 
+    }
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     //console.log(result);
@@ -448,7 +491,7 @@ app.get('/budgets', async (req, res) => {
 
 app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
-    month = req.query.month ;
+    month = req.query.month;
     currentDate = new Date();
     overspent = req.query.overspent;
     loginID = req.session.loginID;
@@ -461,22 +504,22 @@ app.get('/expenses', async (req, res) => {
         } else {
             currentMonth = parseInt(month) % 12
         }
-    } 
+    }
     console.log(currentMonth)
     if (result.length === 0 || result[0].expense === undefined) {
-        res.render("expenses", { exist: false, overspent: overspent, currenMonth: currentMonth})
+        res.render("expenses", { exist: false, overspent: overspent, currenMonth: currentMonth })
     }
     else {
         expense = result[0].expense;
-        res.render("expenses", { expense: expense, exist: true,currenMonth: currentMonth})
+        res.render("expenses", { expense: expense, exist: true, currenMonth: currentMonth })
     };
 });
 
 app.use('/savings', sessionValidation);
 app.get('/savings', async (req, res) => {
     loginID = req.session.loginID;
-    const result = await investmentCollection.find({loginID: loginID}).project({item: 1, price: 1, year: 1, interest: 1, _id:1}).toArray();
-    res.render("savings", {investments: result})
+    const result = await investmentCollection.find({ loginID: loginID }).project({ item: 1, price: 1, year: 1, interest: 1, _id: 1 }).toArray();
+    res.render("savings", { investments: result })
 })
 
 function calculateTotal(result) {
@@ -527,14 +570,14 @@ app.post('/calculations', async (req, res) => {
 app.get('/deleteInvestment', async (req, res) => {
     var loginID = req.session.loginID;
     var item = req.query.item;
-    await investmentCollection.deleteOne({loginID : loginID, item: item});
+    await investmentCollection.deleteOne({ loginID: loginID, item: item });
     res.redirect("/savings");
 })
 
 app.get('/deleteExpense', async (req, res) => {
     var loginID = req.session.loginID;
     var expense = req.query.expense;
-    await expenseCollection.deleteOne({loginID : loginID, expense : expense});
+    await expenseCollection.deleteOne({ loginID: loginID, expense: expense });
     res.redirect("/expenses");
 })
 
@@ -561,7 +604,7 @@ app.get('/summary', async (req, res) => {
         const newsResponse = await axios.get('https://newsapi.org/v2/everything', {
             params: {
                 q: `inflation ${selectedCountry}`, // Search for inflation news related to the selected country
-                language: 'en', 
+                language: 'en',
                 apiKey: newsApiKey,
                 excludeSources: 'reuters'
             }
@@ -604,7 +647,7 @@ app.get('/deletebudget', async (req, res) => {
     )
     var expense = budgetname
     const deleteexpense = await expenseCollection.updateOne(
-        {loginID:loginID, [expense]:  {$exists:true}}, {$unset: {[expense]: ''}}
+        { loginID: loginID, [expense]: { $exists: true } }, { $unset: { [expense]: '' } }
     )
     res.redirect('/budgets')
 });
