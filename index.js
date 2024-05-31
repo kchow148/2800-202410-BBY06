@@ -269,7 +269,7 @@ app.post('/settingBudget', async (req, res) => {
     const schema = Joi.object(
         {
             budgetname: Joi.string().regex(/^[a-zA-Z0-9-]+$/).max(20).required(),
-            budgetamount: Joi.number().required()
+            budgetamount: Joi.number().min(1).required()
         });
     const validationResult = schema.validate({ budgetname, budgetamount });
     if (validationResult.error != null) {
@@ -350,7 +350,8 @@ app.post('/addingExpenses', async (req, res) => {
     //  let total = 0;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
     if (result[0].categories === undefined) {
-        res.render("expenses", { exist: false });
+        res.redirect("expenses");
+        return
     }
     else {
         
@@ -391,7 +392,7 @@ app.post('/addingExpenses', async (req, res) => {
         res.redirect(`/expenses/?overspent=${overspent}`);
     }
     else{
-        res.redirect('/addExpenses');
+        res.redirect('/expenses');
     }
 });
 
@@ -570,7 +571,6 @@ app.get('/summary', async (req, res) => {
     try {
         const selectedCountry = req.query.country; // Get the selected country from the query parameters
         console.log(selectedCountry);
-        // Fetch inflation data for the selected country
         const options = {
             url: `https://api.api-ninjas.com/v1/inflation?country=${selectedCountry}`,
             headers: {
@@ -580,8 +580,6 @@ app.get('/summary', async (req, res) => {
         const inflationResponse = await requestPromise(options);
         const inflationDataArray = JSON.parse(inflationResponse);
         const inflationData = inflationDataArray[0];
-
-        // Fetch news articles related to inflation
         const newsApiKey = api_key_2;
         const newsResponse = await axios.get('https://newsapi.org/v2/everything', {
             params: {
@@ -594,7 +592,6 @@ app.get('/summary', async (req, res) => {
         let newsArticles = newsResponse.data.articles;
 
         if (newsArticles.length === 0) {
-            // If no news articles found, fetch general inflation news
             const generalNewsResponse = await axios.get('https://newsapi.org/v2/everything', {
                 params: {
                     q: 'inflation',
@@ -605,8 +602,6 @@ app.get('/summary', async (req, res) => {
             });
             newsArticles = generalNewsResponse.data.articles;
         }
-
-        // Render the 'summary' template with the fetched data and selected country
         res.render('summary', { selectedCountry, inflationData, newsArticles });
     } catch (error) {
         console.error('Error:', error);
