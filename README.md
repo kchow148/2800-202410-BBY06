@@ -60,32 +60,39 @@ warningModal.ejs
 
 # How to install or run the project:
 To access the projects database, they must use MongoDB.
+.env file is provided to access the MongoDB
 In order to run the localhost, npm i node must be installed
 API keys are needed in order to access the Inflation Page
+Download Visual Studio code to edit the code
+Clone the git repo to have access to project
 
 # Features
-To add budget: click plus button to create budget and input name and price.
-To add expense: click expense icon on the button page and input expense name, what category it is and the price,
-To add investment: click investment icon on the bottom page. Input item, price, target year, and percent rate.
-To view budget: Click on budget icon and you are able to view the budgets you've made.
-To view expense: Click expense icon to view previous expenses as well as the time.
-To view inflation rate and news: Click the inflation icon. Select country in the dropbox, then info will be displayed as well as news articles
+To Add Budget: Click Plus Button to Create Budget and Input Name and Price.
+To Add Expense: Click Expense Icon on the Button Page and Input Expense Name, What Category It Is, and the Price.
+To Add Investment: Click Investment Icon on the Bottom Page. Input Item, Price, Target Year, and Percent Rate.
+To View Budget: Click on Budget Icon and You Are Able to View the Budgets You've Made.
+To View Expense: Click Expense Icon to View Previous Expenses as Well as the Time.
+To View Inflation Rate and News: Click the Inflation Icon. Select Country in the Dropbox, Then Info Will Be Displayed as Well as News Articles.
 
 # Credits
-Chat GPT4.0
+ChatGPT 4.0
 w3schools
 StackOverFlow
 
 # AI
 1. Did you use AI to help create your app? If so, how? Be specific. [ 2 marks]
 Yes, we used AI to help develop ideas, documentation, and explain certain coding blocks.
-2. DId you use AI to create data sets or clean data sets? If so, how? Be specific. [ 2 marks]
 
+2. DId you use AI to create data sets or clean data sets? If so, how? Be specific. [ 2 marks]
 We used AI to delete certain data sets in our database
-3. Does your app use AI? If so, how? Be specific. [ 2 marks]
+
+3. Does your app use AI? If so, how? Be specific. 
 Our app does not use AI because when we were planning on how to create our web app, we thought it would be best to keep the features simple and allow the user to have full control over their inputs. Also, we didn't use AI because we tried different approaches but received inaccurate results. For instance, we tried to calculate the future value of money but it didn’t yield in every factor nor did it use the correct calculations.  
 
-4. Did you encounter any limitations? What were they, and how did you overcome them? Be specific. [ 2 marks]
+4. Did you encounter any limitations? What were they, and how did you overcome them? Be specific. 
+Some of the limitations of using AI was the answer and code they provided wasn't 100% accurate. We were able to overcome this make refactor the code by helping each other and asking for advice from team members if theres another way to do a function or run something.
+
+
 # Project Team: 
 ## About Us
 Team Name: BBY-06
