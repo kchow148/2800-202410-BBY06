@@ -68,9 +68,48 @@ function sessionValidation(req, res, next) {
     }
 }
 
+async function updatedata(loginID) {
+    try {
+        // Fetch expenses related to the loginID
+        const expensesResult = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
+        if (expensesResult.length === 0 || expensesResult[0].expense === undefined) {
+            console.log("Expense empty");
+            return 'No expenses found';
+        }
+        const now = new Date();
+        const dateChange = new Date(now.setMonth(now.getMonth() - 10));
+        // Additional update for the "expense" field, if necessary
+        const expenseUpdateResult = await expenseCollection.updateMany(
+            { expense: { $exists: true } },
+            { $pull: { expense: { date: { $lt: dateChange } } } }
+        );
+        console.log(`Updated ${expenseUpdateResult.modifiedCount} documents for general expenses`);
+        // Fetch budget categories related to the loginID
+        const budgetResult = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
+        if (budgetResult.length === 0 || budgetResult[0].categories === undefined) {
+            console.log("No categories found");
+            return 'No categories found';
+        }
+        const budgets = budgetResult[0].categories;
+
+        for (let i = 0; i < budgets.length; i++) {
+            const budgetCategory = budgets[i].budgetname;
+            // Update documents that have the budget category and remove old entries
+            const updateResult = await expenseCollection.updateMany(
+                { [`${budgetCategory}`]: { $exists: true } },
+                { $pull: { [`${budgetCategory}`]: { date: { $lt: dateChange } } } }
+            );
+            console.log(`Updated ${updateResult.modifiedCount} documents for category ${budgetCategory}`);
+        }
+        return 'Data updated successfully';
+    } catch (error) {
+        console.error('Error updating data:', error);
+        throw new Error('Internal server error');
+    }
+}
+
+
 app.get('/', (req, res) => {
-    console.log(isValidSession(req) == true);
-    console.log(true);
     if (req.session.authenticated) {
         res.render("index");
     } else {
@@ -162,8 +201,6 @@ app.post('/loggingin', async (req, res) => {
     }
 
     const result = await userCollection.find({ loginID: loginID }).project({ loginID: 1, password: 1, _id: 1 }).toArray();
-
-    console.log(result);
     if (result.length != 1) {
         console.log("user not found");
         res.redirect("/login");
@@ -175,7 +212,7 @@ app.post('/loggingin', async (req, res) => {
         req.session.loginID = loginID;
         req.session.user_type = result[0].user_type;
         req.session.cookie.maxAge = expireTime;
-
+        const changedata = await updatedata(loginID);
         res.redirect("/home");
         return;
     }
@@ -209,7 +246,6 @@ app.get('/home', async (req, res) => {
             var expense = await expenseCollection.find({ loginID: loginID }).project(find).toArray();
             if (expense[0] === undefined) {
                 expenses.push(total);
-                console.log("[/home] total is now: " + total);
             }
             else if (expense[0][findexpense] === undefined) {
                 expenses.push(total);
@@ -221,8 +257,6 @@ app.get('/home', async (req, res) => {
                 for (m = 0; m < record.length; m++) {
                     if (record[m].date.getMonth() === currentDate.getMonth())
                         total += record[m].price;
-                    console.log(record[m].date.getMonth());
-                    console.log(currentDate.getMonth());
                 }
                 expenses.push(total);
 
@@ -255,6 +289,10 @@ app.post('/settingBudget', async (req, res) => {
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     console.log(result[0].categories);
+    if (budgetname === "other") {
+        res.redirect("/setBudget/?error=budget already exists");
+        return;
+    }
     if (result[0].categories === undefined) {
 
     } else {
@@ -331,11 +369,13 @@ app.post('/addingExpenses', async (req, res) => {
     catexpense = {};
     catexpense[category] = objexpense;
     console.log("objexpense: " + objexpense);
-    await expenseCollection.findOneAndUpdate(
-        { loginID: loginID },
-        { $push: catexpense },
-        { upsert: true, new: true }
-    );
+    if (category != "other") {
+        await expenseCollection.findOneAndUpdate(
+            { loginID: loginID },
+            { $push: catexpense },
+            { upsert: true, new: true }
+        );
+    }
     addexpense = { expense: expenses, date: new Date(), price: Number(price), category: category };
     console.log("addexpense: " + addexpense);
     expense = {};
