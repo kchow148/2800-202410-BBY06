@@ -86,10 +86,10 @@ app.get('/createUser', (req, res) => {
 
 //Save user account into a database
 app.post('/submitUser', async (req, res) => {
-    var username = req.body.username;
-    var loginID = req.body.loginID;
-    var email = req.body.email;
-
+    var username = req.body.username.trim();
+    var loginID = req.body.loginID.trim();
+    var email = req.body.email.trim();
+    console.log(loginID)
     var password = req.body.password;
 
     const existingUser = await userCollection.findOne({ loginID: loginID });
@@ -138,7 +138,7 @@ app.get("/passwordReset", (req, res) => {
 
 //Change password
 app.post("/changingPassword", async (req, res) => {
-    var username = req.body.username;
+    var username = req.body.username.trim();
     var password = req.body.password;
 
     const schema = Joi.string().max(20).required();
@@ -150,7 +150,7 @@ app.post("/changingPassword", async (req, res) => {
 
 //Login validation 
 app.post('/loggingin', async (req, res) => {
-    var loginID = req.body.loginID;
+    var loginID = req.body.loginID.trim();
     var password = req.body.password;
 
     const schema = Joi.string().max(20).required();
@@ -249,7 +249,7 @@ app.get('/setBudget', (req, res) => {
 
 //Store budget in a database
 app.post('/settingBudget', async (req, res) => {
-    budgetname = req.body.name;
+    budgetname = req.body.name.trim();
     budgetamount = req.body.amount;
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
@@ -307,10 +307,8 @@ app.get('/addExpenses', async (req, res) => {
 
 //Save expense in database
 app.post('/addingExpenses', async (req, res) => {
-    expenses = req.body.expense
-    console.log("expenses: " + expenses);
+    expenses = req.body.expense.trim()
     category = decodeURIComponent(req.body.category);
-    console.log("category: " + category);
     price = req.body.price;
     loginID = req.session.loginID;
     const schema = Joi.object(
@@ -518,7 +516,7 @@ app.get('/investments', async (req, res) => {
 
 //Calculates value of investment on a future date
 app.post('/calculations', async (req, res) => {
-    var item = req.body.item;
+    var item = req.body.item.trim();
     var price = parseInt(req.body.price);
     var year = parseInt(req.body.year);
     var interest = parseInt(req.body.interest);
