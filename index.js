@@ -269,7 +269,7 @@ app.post('/settingBudget', async (req, res) => {
     const schema = Joi.object(
         {
             budgetname: Joi.string().regex(/^[a-zA-Z0-9-]+$/).max(20).required(),
-            budgetamount: Joi.number().required()
+            budgetamount: Joi.number().min(1).required()
         });
     const validationResult = schema.validate({ budgetname, budgetamount });
     if (validationResult.error != null) {
@@ -350,7 +350,8 @@ app.post('/addingExpenses', async (req, res) => {
     //  let total = 0;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
     if (result[0].categories === undefined) {
-        res.render("expenses", { exist: false });
+        res.redirect("expenses");
+        return
     }
     else {
         
@@ -391,7 +392,7 @@ app.post('/addingExpenses', async (req, res) => {
         res.redirect(`/expenses/?overspent=${overspent}`);
     }
     else{
-        res.redirect('/addExpenses');
+        res.redirect('/expenses');
     }
 });
 
