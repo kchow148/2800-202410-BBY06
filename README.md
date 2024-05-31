@@ -8,9 +8,55 @@ ValueVest
 Our project, BBY-06, is developing a comprehensive budgeting app to help young adults for the future amidst rising prices, empowering them to manage savings, income, and expenses while integrating inflation awareness.
 
 # Technologies: 
-HTML, CSS, JavaScript, Express.js, Node.js, MongoDB, Render, GitHub, Chat GPT 4.0, News API, Ninja API, Bootstrap, SourceTree
+EJS, CSS, JavaScript, Express.js, Node.js, MongoDB, Render, GitHub, Chat GPT 4.0, News API, Ninja API, Bootstrap, SourceTree
 
 # Files
+2800-202410-BBY06 FOLDER:
+README.md		
+index.js		
+public
+about.html		
+node_modules		
+views
+databaseConnection.js	
+package-lock.json
+dev.txt			
+package.json
+
+PUBLIC FOLDER:
+images		
+style.css
+
+VIEWS:
+404.ejs			
+home.ejs		
+savings.ejs
+WarningExceedBudget.ejs	
+ndex.ejs		
+setBudget.ejs
+addExpenses.ejs		
+investments.ejs		
+summary.ejs
+budgets.ejs		
+login.ejs		
+template.ejs
+calculations.ejs	
+passwordChange.ejs
+createUser.ejs		
+passwordReset.ejs
+expenses.ejs		
+profilePage.ejs
+templates
+
+TEMPLATES FOLDER:
+budgetcategories.ejs		
+header.ejs
+budgetcategorieshome.ejs	
+listofexpense.ejs
+dropdown.ejs			
+listofinvestments.ejs
+footer.ejs			
+warningModal.ejs
 
 # How to install or run the project:
 To access the projects database, they must use MongoDB.
