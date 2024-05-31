@@ -76,18 +76,21 @@ async function updatedata(loginID) {
             console.log("Expense empty");
             return 'No expenses found';
         }
-
+        const now = new Date();
+        const dateChange = new Date(now.setMonth(now.getMonth() - 10));
+        // Additional update for the "expense" field, if necessary
+        const expenseUpdateResult = await expenseCollection.updateMany(
+            { expense: { $exists: true } },
+            { $pull: { expense: { date: { $lt: dateChange } } } }
+        );
+        console.log(`Updated ${expenseUpdateResult.modifiedCount} documents for general expenses`);
         // Fetch budget categories related to the loginID
         const budgetResult = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
         if (budgetResult.length === 0 || budgetResult[0].categories === undefined) {
             console.log("No categories found");
             return 'No categories found';
         }
-
         const budgets = budgetResult[0].categories;
-        const now = new Date();
-        const dateChange = new Date(now.setMonth(now.getMonth() - 10));
-        console.log(`Date change: ${dateChange}`);
 
         for (let i = 0; i < budgets.length; i++) {
             const budgetCategory = budgets[i].budgetname;
@@ -98,14 +101,6 @@ async function updatedata(loginID) {
             );
             console.log(`Updated ${updateResult.modifiedCount} documents for category ${budgetCategory}`);
         }
-
-        // Additional update for the "expense" field, if necessary
-        const expenseUpdateResult = await expenseCollection.updateMany(
-            { expense: { $exists: true } },
-            { $pull: { expense: { date: { $lt: dateChange } } } }
-        );
-        console.log(`Updated ${expenseUpdateResult.modifiedCount} documents for general expenses`);
-
         return 'Data updated successfully';
     } catch (error) {
         console.error('Error updating data:', error);
@@ -206,8 +201,6 @@ app.post('/loggingin', async (req, res) => {
     }
 
     const result = await userCollection.find({ loginID: loginID }).project({ loginID: 1, password: 1, _id: 1 }).toArray();
-
-    console.log(result);
     if (result.length != 1) {
         console.log("user not found");
         res.redirect("/login");
@@ -295,9 +288,9 @@ app.post('/settingBudget', async (req, res) => {
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     console.log(result[0].categories);
-    if (budgetname ==="other") {
+    if (budgetname === "other") {
         res.redirect("/setBudget/?error=budget already exists");
-        return; 
+        return;
     }
     if (result[0].categories === undefined) {
 
@@ -438,7 +431,7 @@ app.post('/addingExpenses', async (req, res) => {
         // res.redirect('/budgetExceeded');
         res.redirect(`/expenses/?overspent=${overspent}`);
     }
-    else{
+    else {
         res.redirect('/expenses');
     }
 });
