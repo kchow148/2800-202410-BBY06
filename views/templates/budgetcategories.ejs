@@ -1,7 +1,7 @@
 <ul class="list-group">
   <li class="list-group-item border border-dark">
     <h5 class="title">
-      <%= budgetname %>: <%= budgetamount %> <a href="/deletebudget/?budget=<%=budgetname%>" <button
+      <%= budgetname %>: $<%= budgetamount %> <a href="/deletebudget/?budget=<%=budgetname%>" <button
             class="btn btn-danger float-end">Delete Budget</button></a>
     </h5>
   </li>
@@ -10,7 +10,7 @@
       <% for (i=0; i < expenses.length; i++) { %>
         <li class="list-group-item fw-normal border border-dark">
           Expense Name : <%= expenses[i].expense %>, Date : <%= expenses[i].date %> <br>
-              Price : <%= expenses[i].price %>
+              Price : $<%= expenses[i].price %>
         </li>
         <% } %>
           <% } else { %>

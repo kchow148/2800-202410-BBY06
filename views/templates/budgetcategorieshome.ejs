@@ -3,7 +3,7 @@
       <div class="card-header"></div>
       <div class="card-body text-primary">
         <h5 class="card-title"><%= budgetname %></h5>
-        <p class="card-text">Remaining amount <%= budgetamount - expenses %></p>
+        <p class="card-text">Remaining amount $<%= budgetamount - expenses %></p>
         <%let amount = (expenses / budgetamount) * 100 %>
 
         <div class="progress">
