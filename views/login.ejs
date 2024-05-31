@@ -14,7 +14,12 @@
                     <div class="d-flex gap-2 gap-md-4 flex-column flex-md-row justify-content-md-center mt-5">
                         <a href="/passwordReset" class="link-secondary text-decoration-none">Reset Password</a>
                     </div>
-                    <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button>
+                    <button class="w-100 btn btn-lg btn-primary" type="submit">Submit</button><br><br>
+                    <button class="btn btn-primary w-100 py-2" id="resetButton" type="submit">Reset</button>
+
+                    <script>
+                      document.getElementById("resetButton").reset();
+                    </script>
                 </form>
             </div>
         </div>

@@ -120,8 +120,9 @@ StackOverFlow
 1. Did you use AI to help create your app? If so, how? Be specific. 
 Yes, we used AI to help develop ideas, documentation, and explain certain coding blocks. We also used it to help with debugging and also styling. 
 
-2. DId you use AI to create data sets or clean data sets? If so, how? Be specific. 
+2. DId you use AI to create data sets or clean data sets? If so, how? Be specific. [ 2 marks]
 We used AI to delete certain data sets in our database.
+We used AI for the notation of how to add certain things a certain way to mongodb.
 
 3. Does your app use AI? If so, how? Be specific. 
 Our app does not use AI because when we were planning on how to create our web app, we thought it would be best to keep the features simple and allow the user to have full control over their inputs. Also, we didn't use AI because we tried different approaches but received inaccurate results. For instance, we tried to calculate the future value of money but it didn’t yield in every factor nor did it use the correct calculations.  
