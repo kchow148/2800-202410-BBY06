@@ -62,7 +62,7 @@ function sessionValidation(req, res, next) {
     }
 }
 
-async function updateatedata(loginID) {
+async function updatedata(loginID) {
     try {
         // Fetch expenses related to the loginID
         const expensesResult = await expenseCollection.find({ loginID: loginID }).project({ expense: 1 }).toArray();
@@ -85,7 +85,6 @@ async function updateatedata(loginID) {
 
         for (let i = 0; i < budgets.length; i++) {
             const budgetCategory = budgets[i].budgetname;
-            console.log(budgetCategory);
             // Update documents that have the budget category and remove old entries
             const updateResult = await expenseCollection.updateMany(
                 { [`${budgetCategory}`]: { $exists: true } },
@@ -208,7 +207,7 @@ app.post('/loggingin', async (req, res) => {
         req.session.loginID = loginID;
         req.session.user_type = result[0].user_type;
         req.session.cookie.maxAge = expireTime;
-
+        const changedata = await updatedata(loginID);
         res.redirect("/home");
         return;
     }
@@ -225,7 +224,6 @@ app.get('/home', async (req, res) => {
         res.redirect('/login');
     }
     loginID = req.session.loginID;
-    const changedata = await updateatedata(loginID);
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
     if (result[0].categories === undefined) {
         res.render("home", { exist: false });
@@ -362,11 +360,13 @@ app.post('/addingExpenses', async (req, res) => {
     catexpense = {};
     catexpense[category] = objexpense;
     console.log("objexpense: " + objexpense);
-    await expenseCollection.findOneAndUpdate(
-        { loginID: loginID },
-        { $push: catexpense },
-        { upsert: true, new: true }
-    );
+    if (category != "other") {
+        await expenseCollection.findOneAndUpdate(
+            { loginID: loginID },
+            { $push: catexpense },
+            { upsert: true, new: true }
+        );
+    }
     addexpense = { expense: expenses, date: new Date(), price: Number(price), category: category };
     console.log("addexpense: " + addexpense);
     expense = {};
