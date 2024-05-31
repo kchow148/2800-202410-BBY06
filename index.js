@@ -243,8 +243,9 @@ app.get('/logout', (req, res) => {
 app.use('/setBudget', sessionValidation);
 app.get('/setBudget', (req, res) => {
     error = req.query.error
+    success = req.query.success;
     console.log(error);
-    res.render("setBudget", { error: error });
+    res.render("setBudget", { error: error, success: success});
 })
 
 //Store budget in a database
@@ -285,7 +286,7 @@ app.post('/settingBudget', async (req, res) => {
         { $addToSet: { categories: { $each: [{ budgetname: budgetname, budgetamount: Number(budgetamount) }] } } },
         // Options (optional)
     )
-    res.redirect('/home');
+    res.redirect('/setBudget?success=budget_created');
 });
 
 //Add an expense

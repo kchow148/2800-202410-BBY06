@@ -1,3 +1,19 @@
+<div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="successModalLabel">Success</h5>
+      </div>
+      <div class="modal-body">
+        Budget created successfully.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <%- include("templates/header") %>
   <main class="form-signin w-100 m-auto">
     <form action='/settingBudget' method='post'>
@@ -50,5 +66,15 @@
             myModal.show();
         });
     </script>
+    
+<% } %>
+
+<% if (success === 'budget_created') { %>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var myModal = new bootstrap.Modal(document.getElementById('successModal'));
+      myModal.show();
+    });
+  </script>
 <% } %>
   <%- include("templates/footer") %>
