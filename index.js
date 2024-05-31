@@ -1,3 +1,4 @@
+//Node and express imports
 require('dotenv').config();
 const express = require("express");
 const session = require('express-session');
@@ -14,9 +15,11 @@ const requestPromise = require('request-promise');
 const app = express();
 app.use(express.static(__dirname + '/public'));
 
+//Port and session expiration time
 const port = process.env.PORT || 3000;
 const expireTime = 1 * 60 * 60 * 1000;
 
+//Joi and MongoDB environment variables
 const mongodb_host = process.env.MONGODB_HOST;
 const mongodb_user = process.env.MONGODB_USER;
 const mongodb_password = process.env.MONGODB_PASSWORD;
@@ -31,6 +34,8 @@ var mongoStore = MongoStore.create({
         secret: mongodb_secret
     }
 });
+
+//Databases
 const { database } = require('./databaseConnection');
 const { Console } = require('console');
 const userCollection = database.db(mongodb_database).collection('users');
@@ -39,6 +44,7 @@ const investmentCollection = database.db(mongodb_database).collection('investmen
 app.set('view engine', 'ejs');
 app.use(favicon(path.join(__dirname + '/public', 'images', 'logo.ico')));
 
+//Session authorization and authentication
 app.use(session({
     secret: node_session_secret,
     store: mongoStore,
@@ -117,16 +123,17 @@ app.get('/', (req, res) => {
     }
 });
 
+//Creating new user account
 app.get('/createUser', (req, res) => {
     res.render("createUser", { html: '' });
 });
 
-
+//Save user account into a database
 app.post('/submitUser', async (req, res) => {
-    var username = req.body.username;
-    var loginID = req.body.loginID;
-    var email = req.body.email;
-
+    var username = req.body.username.trim();
+    var loginID = req.body.loginID.trim();
+    var email = req.body.email.trim();
+    console.log(loginID)
     var password = req.body.password;
 
     const existingUser = await userCollection.findOne({ loginID: loginID });
@@ -163,16 +170,19 @@ app.post('/submitUser', async (req, res) => {
     res.redirect("/home");
 });
 
+//Login page
 app.get('/login', (req, res) => {
     res.render("login");
 });
 
+//Reset password page
 app.get("/passwordReset", (req, res) => {
     res.render("passwordReset");
 });
 
+//Change password
 app.post("/changingPassword", async (req, res) => {
-    var username = req.body.username;
+    var username = req.body.username.trim();
     var password = req.body.password;
 
     const schema = Joi.string().max(20).required();
@@ -181,8 +191,10 @@ app.post("/changingPassword", async (req, res) => {
     res.redirect("/login");
     return;
 });
+
+//Login validation 
 app.post('/loggingin', async (req, res) => {
-    var loginID = req.body.loginID;
+    var loginID = req.body.loginID.trim();
     var password = req.body.password;
 
     const schema = Joi.string().max(20).required();
@@ -218,6 +230,7 @@ app.post('/loggingin', async (req, res) => {
     }
 });
 
+//Home page
 app.use('/home', sessionValidation);
 app.get('/home', async (req, res) => {
     if (!req.session.authenticated) {
@@ -261,11 +274,13 @@ app.get('/home', async (req, res) => {
     }
 });
 
+//Log out
 app.get('/logout', (req, res) => {
     req.session.destroy();
     res.redirect('/');
 })
 
+//Budget page
 app.use('/setBudget', sessionValidation);
 app.get('/setBudget', (req, res) => {
     error = req.query.error
@@ -273,8 +288,9 @@ app.get('/setBudget', (req, res) => {
     res.render("setBudget", { error: error });
 })
 
+//Store budget in a database
 app.post('/settingBudget', async (req, res) => {
-    budgetname = req.body.name;
+    budgetname = req.body.name.trim();
     budgetamount = req.body.amount;
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
@@ -298,7 +314,7 @@ app.post('/settingBudget', async (req, res) => {
     const schema = Joi.object(
         {
             budgetname: Joi.string().regex(/^[a-zA-Z0-9-]+$/).max(20).required(),
-            budgetamount: Joi.number().required()
+            budgetamount: Joi.number().min(1).required()
         });
     const validationResult = schema.validate({ budgetname, budgetamount });
     if (validationResult.error != null) {
@@ -317,6 +333,7 @@ app.post('/settingBudget', async (req, res) => {
     res.redirect('/home');
 });
 
+//Add an expense
 app.use('/addExpenses', sessionValidation);
 app.get('/addExpenses', async (req, res) => {
     url = req.query.error;
@@ -333,12 +350,10 @@ app.get('/addExpenses', async (req, res) => {
     }
 });
 
-
+//Save expense in database
 app.post('/addingExpenses', async (req, res) => {
-    expenses = req.body.expense
-    console.log("expenses: " + expenses);
+    expenses = req.body.expense.trim()
     category = decodeURIComponent(req.body.category);
-    console.log("category: " + category);
     price = req.body.price;
     loginID = req.session.loginID;
     const schema = Joi.object(
@@ -382,7 +397,8 @@ app.post('/addingExpenses', async (req, res) => {
     //  let total = 0;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).limit(6).toArray();
     if (result[0].categories === undefined) {
-        res.render("expenses", { exist: false });
+        res.redirect("expenses");
+        return
     }
     else {
 
@@ -422,11 +438,12 @@ app.post('/addingExpenses', async (req, res) => {
         // res.redirect('/budgetExceeded');
         res.redirect(`/expenses/?overspent=${overspent}`);
     }
-    else {
-        res.redirect('/addExpenses');
+    else{
+        res.redirect('/expenses');
     }
 });
 
+//Profile page
 app.use('/profilePage', sessionValidation);
 app.get('/profilePage', async (req, res) => {
     loginID = req.session.loginID;
@@ -443,6 +460,7 @@ app.get('/budgetExceeded', async (req, res) => {
     res.render("WarningExceedBudget");
 });
 
+//Budget page
 app.use('/budgets', sessionValidation);
 app.get('/budgets', async (req, res) => {
     month = req.query.month
@@ -493,6 +511,7 @@ app.get('/budgets', async (req, res) => {
     }
 });
 
+//Expenses page
 app.use('/expenses', sessionValidation);
 app.get('/expenses', async (req, res) => {
     month = req.query.month;
@@ -519,6 +538,7 @@ app.get('/expenses', async (req, res) => {
     };
 });
 
+//Savings Page
 app.use('/savings', sessionValidation);
 app.get('/savings', async (req, res) => {
     loginID = req.session.loginID;
@@ -526,6 +546,7 @@ app.get('/savings', async (req, res) => {
     res.render("savings", { investments: result })
 })
 
+//Function to caluclate total expenses
 function calculateTotal(result) {
     let total = 0;
     for (i = 0; i < result[0].expense.length; i++) {
@@ -535,13 +556,15 @@ function calculateTotal(result) {
     return total;
 }
 
+//Investments page
 app.use('/investments', sessionValidation);
 app.get('/investments', async (req, res) => {
     res.render("investments");
 })
 
+//Calculates value of investment on a future date
 app.post('/calculations', async (req, res) => {
-    var item = req.body.item;
+    var item = req.body.item.trim();
     var price = parseInt(req.body.price);
     var year = parseInt(req.body.year);
     var interest = parseInt(req.body.interest);
@@ -571,6 +594,7 @@ app.post('/calculations', async (req, res) => {
     res.render("calculations", { item: item, year: year, price: newPrice, interest: interest });
 })
 
+//Function to delete an investment from a list
 app.get('/deleteInvestment', async (req, res) => {
     var loginID = req.session.loginID;
     var item = req.query.item;
@@ -578,6 +602,7 @@ app.get('/deleteInvestment', async (req, res) => {
     res.redirect("/savings");
 })
 
+//Function to delete an expense from a list
 app.get('/deleteExpense', async (req, res) => {
     var loginID = req.session.loginID;
     var expense = req.query.expense;
@@ -585,14 +610,14 @@ app.get('/deleteExpense', async (req, res) => {
     res.redirect("/expenses");
 })
 
-
+//Axios
 const axios = require('axios');
 
+//Summary of news related to inflation as well as each country's different inflation rate
 app.get('/summary', async (req, res) => {
     try {
         const selectedCountry = req.query.country; // Get the selected country from the query parameters
         console.log(selectedCountry);
-        // Fetch inflation data for the selected country
         const options = {
             url: `https://api.api-ninjas.com/v1/inflation?country=${selectedCountry}`,
             headers: {
@@ -602,8 +627,6 @@ app.get('/summary', async (req, res) => {
         const inflationResponse = await requestPromise(options);
         const inflationDataArray = JSON.parse(inflationResponse);
         const inflationData = inflationDataArray[0];
-
-        // Fetch news articles related to inflation
         const newsApiKey = api_key_2;
         const newsResponse = await axios.get('https://newsapi.org/v2/everything', {
             params: {
@@ -616,7 +639,6 @@ app.get('/summary', async (req, res) => {
         let newsArticles = newsResponse.data.articles;
 
         if (newsArticles.length === 0) {
-            // If no news articles found, fetch general inflation news
             const generalNewsResponse = await axios.get('https://newsapi.org/v2/everything', {
                 params: {
                     q: 'inflation',
@@ -627,8 +649,6 @@ app.get('/summary', async (req, res) => {
             });
             newsArticles = generalNewsResponse.data.articles;
         }
-
-        // Render the 'summary' template with the fetched data and selected country
         res.render('summary', { selectedCountry, inflationData, newsArticles });
     } catch (error) {
         console.error('Error:', error);
@@ -636,6 +656,7 @@ app.get('/summary', async (req, res) => {
     }
 });
 
+//Delete a budget
 app.get('/deletebudget', async (req, res) => {
     loginID = req.session.loginID;
     budgetname = req.query.budget;
@@ -656,11 +677,13 @@ app.get('/deletebudget', async (req, res) => {
     res.redirect('/budgets')
 });
 
+//Error page
 app.get('*', (req, res) => {
     res.status(404);
     res.render("404");
 })
 
+//Launch app
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 })
