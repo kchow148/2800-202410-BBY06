@@ -143,4 +143,4 @@ Team Members:
 - James Tolen
 
 ## Contact Info
-- James GitHub Username: jbtolen
+- James' Email: jamestolen15@gmail.com

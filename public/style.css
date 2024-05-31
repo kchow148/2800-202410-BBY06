@@ -1,23 +1,5 @@
-/* @keyframes color {
-    0%   { background: #33CCCC; }
-    12.5%  { background: #3de8e8; }
-    25% { background: #54ffff; }
-    37.5% { background: #73ffff; }
-    50% { background: #3dffff; }
-    62.5% { background: #37e7e7; }
-    75% { background: #1de0e0; }
-    87.5% { background: #38eaea; }
-    100% { background: #33CCCC; }
-  }
-  
-  body {
-    background: #33CCCC; 
-    animation: color 10s infinite linear;
-    text-align: center;
-    padding: 2em;
-  } */
-  
-  body {
+
+    body {
     margin: 0;
     overflow-x: hidden;
     background: #2c3e50; /* Dark background for better visibility */
