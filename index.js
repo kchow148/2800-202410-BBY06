@@ -80,7 +80,7 @@ async function updateatedata(loginID) {
 
         const budgets = budgetResult[0].categories;
         const now = new Date();
-        const dateChange = new Date(now.setMonth(now.getMonth() - 11));
+        const dateChange = new Date(now.setMonth(now.getMonth() - 10));
         console.log(`Date change: ${dateChange}`);
 
         for (let i = 0; i < budgets.length; i++) {
@@ -281,6 +281,10 @@ app.post('/settingBudget', async (req, res) => {
     loginID = req.session.loginID;
     const result = await userCollection.find({ loginID: loginID }).project({ categories: 1 }).toArray();
     console.log(result[0].categories);
+    if (budgetname ==="other") {
+        res.redirect("/setBudget/?error=budget already exists");
+        return; 
+    }
     if (result[0].categories === undefined) {
 
     } else {
