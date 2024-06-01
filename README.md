@@ -144,3 +144,4 @@ Team Members:
 
 ## Contact Info
 - James' Email: jamestolen15@gmail.com
+- Keith's Email: kchow071997@gmail.com
