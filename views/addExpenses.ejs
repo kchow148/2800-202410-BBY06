@@ -30,11 +30,6 @@
       <div class="form-check text-start my-3">
       </div>
       <button class="btn btn-primary w-100 py-2" id="addExpenseButton" type="submit">Add Expense</button><br><br>
-      <button class="btn btn-primary w-100 py-2" id="resetButton" type="submit">Reset</button>
-
-      <script>
-        document.getElementById("resetButton").reset();
-      </script>
       
       <% if (error) { %>
           <script>
@@ -63,9 +58,14 @@
               </div>
           </div>
       </div>
-      
-      <p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
     </form>
+    <a href = /addExpenses>
+      <button class="btn btn-primary w-100 py-2" id="resetButton">Reset</button>
+    </a>
+    <p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
+    <script>
+      document.getElementById("resetButton").reset();
+    </script>
 
   </main>
 

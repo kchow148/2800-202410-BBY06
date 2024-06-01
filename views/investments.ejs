@@ -22,12 +22,14 @@
     </div>
     <br>
     <button class="btn btn-primary w-100 py-2" type="submit">Add Investment</button><br><br>
-    <button class="btn btn-primary w-100 py-2" id="resetButton" type="submit">Reset</button>
-
-    <script>
-      document.getElementById("resetButton").reset();
-    </script>
-
-    <p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
 </form>
+<a href="/investments">
+    <button class="btn btn-primary w-100 py-2" id="resetButton">Reset</button>
+</a>
+
+<script>
+  document.getElementById("resetButton").reset();
+</script>
+
+<p class="mt-5 mb-3 text-body-secondary">© 2017–2024</p>
 <%- include("templates/footer") %>
