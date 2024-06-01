@@ -279,7 +279,7 @@ app.get('/setBudget', (req, res) => {
     error = req.query.error
     success = req.query.success;
     console.log(error);
-    res.render("setBudget", { error: error, success: success});
+    res.render("setBudget", { error: error, success: success}); // Send error or success to ejs file
 })
 
 //Store budget in a database
@@ -305,6 +305,7 @@ app.post('/settingBudget', async (req, res) => {
             }
         }
     };
+    // Check if error occurs using JOI Validation
     const schema = Joi.object(
         {
             budgetname: Joi.string().regex(/^[a-zA-Z0-9-]+$/).max(20).required(),
@@ -604,7 +605,6 @@ app.get('/deleteExpense', async (req, res) => {
     res.redirect("/expenses");
 })
 
-//Axios
 const axios = require('axios');
 
 //Summary of news related to inflation as well as each country's different inflation rate
@@ -648,9 +648,9 @@ app.get('/summary', async (req, res) => {
             });
             newsArticles = generalNewsResponse.data.articles;
         }
+        // Send info into the summary.ejs file
         res.render('summary', { selectedCountry, inflationData, newsArticles });
     } catch (error) {
-        console.error('Error:', error);
         res.status(500).send('An error occurred while fetching data');
     }
 });

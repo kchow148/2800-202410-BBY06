@@ -1,83 +1,98 @@
 <%- include("templates/header") %>
 
-<style>
-    .container {
+    <style>
+        .container {
+            width: 100%;
+        }
 
-        width:100%;
-    }
+        .card {
+            margin-bottom: 20px;
+            height: 300px;
+        }
+    </style>
 
-    .card {
-        margin-bottom: 20px; /* Add margin between cards */
-        height: 300px;
-    }
-</style>
-
-<div class="container">
-    <div class="row">
-        <div class="col-lg-10 mb-3 mb-sm-0">
-            <div class="card" style="margin-top: 10px;">
-                <div class="card-body h-20 p-3 text-bg-dark rounded-3">
-                    <div class="row align-items-md-stretch">
-                        <div class="col-md-6 h-100 text-bg-dark rounded-3">
-                            <% if (inflationData) { %>
-                                <h1><%= inflationData.country %></h1>
-                                <p>Type: <%= inflationData.type %></p>
-                                <p>Period: <%= inflationData.period %></p>
-                                <p>Monthly Monthy Rate (%): <%= inflationData.monthly_rate_pct %></p>
-                                <% if (inflationData.yearly_rate_pct > 5) { %>
-                                    <p style="font-size: 1.5rem; color: red;">Yearly Inflation Rate (%): <%= inflationData.yearly_rate_pct %></p>
-                                <% } else if (inflationData.yearly_rate_pct > 2) { %>
-                                    <p style="font-size: 1.5rem; color: orange;">Yearly Inflation Rate (%): <%= inflationData.yearly_rate_pct %></p>
-                                <% } else { %>
-                                    <p style="font-size: 1.5rem; color: green;">Yearly Inflation Rate (%): <%= inflationData.yearly_rate_pct %></p>
-                                <% } %>
-                            <% } else { %>
-                                <p>No data available</p>
-                            <% } %>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-10 mb-3 mb-sm-0">
+                <div class="card" style="margin-top: 10px;">
+                    <div class="card-body h-20 p-3 text-bg-dark rounded-3">
+                        <div class="row align-items-md-stretch">
+                            <div class="col-md-6 h-100 text-bg-dark rounded-3">
+                                <!-- Display Country Info -->
+                                <% if (inflationData) { %>
+                                    <h1>
+                                        <%= inflationData.country %>
+                                    </h1>
+                                    <p>Type: <%= inflationData.type %>
+                                    </p>
+                                    <p>Period: <%= inflationData.period %>
+                                    </p>
+                                    <p>Monthly Monthy Rate (%): <%= inflationData.monthly_rate_pct %>
+                                    </p>
+                                    <% if (inflationData.yearly_rate_pct> 5) { %>
+                                        <p style="font-size: 1.5rem; color: red;">Yearly Inflation Rate (%): <%=
+                                                inflationData.yearly_rate_pct %>
+                                        </p>
+                                        <% } else if (inflationData.yearly_rate_pct> 2) { %>
+                                            <p style="font-size: 1.5rem; color: orange;">Yearly Inflation Rate (%): <%=
+                                                    inflationData.yearly_rate_pct %>
+                                            </p>
+                                            <% } else { %>
+                                                <p style="font-size: 1.5rem; color: green;">Yearly Inflation Rate (%):
+                                                    <%= inflationData.yearly_rate_pct %>
+                                                </p>
+                                                <% } %>
+                                                    <% } else { %>
+                                                        <p>No data available</p>
+                                                        <% } %>
+                            </div>
+                            <!-- Drop Box for Countries -->
+                            <form action="/summary" method="GET" class="d-flex">
+                                <select id="country-select" class="form-select me-2" name="country">
+                                    <option value="">Select a country</option>
+                                    <option value="Austria">Austria</option>
+                                    <option value="Belgium">Belgium</option>
+                                    <option value="Canada">Canada</option>
+                                    <option value="Chile">Chile</option>
+                                    <option value="Estonia">Estonia</option>
+                                    <option value="Germany">Germany</option>
+                                    <option value="Hungary">Hungary</option>
+                                    <option value="Iceland">Iceland</option>
+                                    <option value="Norway">Norway</option>
+                                    <option value="Portugal">Portugal</option>
+                                    <option value="Russia">Russia</option>
+                                    <option value="Slovakia">Slovakia</option>
+                                    <option value="Sweden">Sweden</option>
+                                    <option value="Switzerland">Switzerland</option>
+                                    <option value="The Netherlands">The Netherlands</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-check"></i></button>
+                            </form>
                         </div>
-                        <form action="/summary" method="GET" class="d-flex">
-                            <select id="country-select" class="form-select me-2" name="country">
-                                <option value="">Select a country</option>
-                                <option value="Austria">Austria</option>
-                                <option value="Belgium">Belgium</option>
-                                <option value="Canada">Canada</option>
-                                <option value="Chile">Chile</option>
-                                <option value="Estonia">Estonia</option>
-                                <option value="Germany">Germany</option>
-                                <option value="Hungary">Hungary</option>
-                                <option value="Iceland">Iceland</option>
-                                <option value="Norway">Norway</option>
-                                <option value="Portugal">Portugal</option>
-                                <option value="Russia">Russia</option>
-                                <option value="Slovakia">Slovakia</option>
-                                <option value="Sweden">Sweden</option>
-                                <option value="Switzerland">Switzerland</option>
-                                <option value="The Netherlands">The Netherlands</option>
-                            </select>
-                            <button type="submit" class="btn btn-primary mt-3"><i class="fas fa-check"></i></button>
-                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <br>
-
-    <div class="row row-cols-1 row-cols-md-2 g-1" id="newsContainer">
-        <% for (let i=0; i < 6; i++) { %>
-            <div class="col-md-4"> <!-- Adjust the column size -->
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title"><%= newsArticles[i].title %></h5>
-                        <p class="card-text"><%= newsArticles[i].description %></p>
-                        <a href="<%= newsArticles[i].url %>" class="btn btn-primary" target="_blank">Read More</a>
+        <br>
+        <!-- Display News Articles using For Loop -->
+        <div class="row row-cols-1 row-cols-md-2 g-1" id="newsContainer">
+            <% for (let i=0; i < 6; i++) { %>
+                <div class="col-md-4"> <!-- Adjust the column size -->
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                <%= newsArticles[i].title %>
+                            </h5>
+                            <p class="card-text">
+                                <%= newsArticles[i].description %>
+                            </p>
+                            <a href="<%= newsArticles[i].url %>" class="btn btn-primary" target="_blank">Read More</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        <% } %>
+                <% } %>
+        </div>
     </div>
-</div>
 
-<%- include("templates/footer") %>
-
+    <%- include("templates/footer") %>
