@@ -1,5 +1,5 @@
 <%- include("templates/header") %>
-<h1>Welcome to h<button id="egg" onclick="eggie()" class="text-warning">o</button>me page!</h1>
+<h1>Welcome to h<button id="egg" onclick="checkEgg()" class="text-warning">o</button>me page!</h1>
 
 <style>
     h1 {
@@ -57,7 +57,7 @@
   </div>
 <% } %>
 
-<div id="money" class="content">
+<div id="money" class="content"> <!-- Easter Egg -->
   <div class="money dollar-bill">💵</div>
   <div class="money dollar-bill">💵</div>
   <div class="money dollar-bill">💵</div>
@@ -66,17 +66,16 @@
   <div class="money dollar-bill">💵</div>
   <div class="money dollar-bill">💵</div>
   <div class="money dollar-bill">💵</div>
-
   <div class="money dollar-bill">💵</div>
   <div class="money dollar-bill">💵</div>
-
   <div class="money dollar-bill">💵</div>
 </div>
 
 
 <script>
+  // Script to check clicks for easter egg
   var clicks = 0;
-  function eggie() {
+  function checkEgg() {
     clicks++;
     if (clicks > 2) {
       clicks = 0;
