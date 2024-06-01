@@ -635,6 +635,7 @@ app.get('/summary', async (req, res) => {
                 excludeSources: 'reuters'
             }
         });
+        /** End of Chat GPT 3.5 */
         let newsArticles = newsResponse.data.articles;
 
         if (newsArticles.length === 0) {
