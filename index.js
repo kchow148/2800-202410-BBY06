@@ -244,7 +244,7 @@ app.post('/settingBudget', async (req, res) => {
     } else {
         let i = 0;
         for (i = 0; i < result[0].categories.length; i++) {
-            if (result[i].categories[i].budgetname === budgetname) {
+            if (result[0].categories[i].budgetname === budgetname) {
                 console.log("budget already made");
                 res.redirect("/setBudget/?error=budget already exists");
                 return;
